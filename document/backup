@@ -1,0 +1,634 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.5.5
+-- Dumped by pg_dump version 9.5.5
+
+-- Started on 2016-12-07 18:37:19 ICT
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+DROP DATABASE postgres;
+--
+-- TOC entry 2179 (class 1262 OID 12379)
+-- Name: postgres; Type: DATABASE; Schema: -; Owner: postgres
+--
+
+CREATE DATABASE postgres WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8';
+
+
+ALTER DATABASE postgres OWNER TO postgres;
+
+\connect postgres
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 2180 (class 1262 OID 12379)
+-- Dependencies: 2179
+-- Name: postgres; Type: COMMENT; Schema: -; Owner: postgres
+--
+
+COMMENT ON DATABASE postgres IS 'default administrative connection database';
+
+
+--
+-- TOC entry 2 (class 3079 OID 12361)
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2183 (class 0 OID 0)
+-- Dependencies: 2
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- TOC entry 1 (class 3079 OID 16466)
+-- Name: adminpack; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS adminpack WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2184 (class 0 OID 0)
+-- Dependencies: 1
+-- Name: EXTENSION adminpack; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION adminpack IS 'administrative functions for PostgreSQL';
+
+
+SET search_path = public, pg_catalog;
+
+--
+-- TOC entry 195 (class 1255 OID 16584)
+-- Name: check_tintuc_tieude(); Type: FUNCTION; Schema: public; Owner: duc
+--
+
+CREATE FUNCTION check_tintuc_tieude() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+
+	IF EXISTS (SELECT "IDTinTuc" FROM "TinTuc" WHERE "TieuDe" = NEW."TieuDe") THEN
+		RETURN NULL;
+	END IF;
+		RETURN NEW;
+
+END;
+$$;
+
+
+ALTER FUNCTION public.check_tintuc_tieude() OWNER TO duc;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 194 (class 1259 OID 16653)
+-- Name: DanhMucSite; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE "DanhMucSite" (
+    "IDDanhMucSite" integer NOT NULL,
+    "DuongDan" character varying(500),
+    "TenGoi" character varying(500),
+    "MoTa" character varying(3000),
+    "SoLuongTinDuyetTim" integer,
+    "TempateCrawlTieuDe" character varying(256),
+    "TempateCrawlMoTa" character varying(256),
+    "TempateCrawlNoiDung" character varying(256),
+    "TempateCrawlImage" character varying(256),
+    "LinkRSS" character varying(256),
+    "TenGoi_KoDau" character varying(500),
+    "Icon" character varying(1000),
+    "ParentID" integer,
+    "TemplateCrawUrl" character varying(200),
+    "TemplateCrawlNgayDang" character varying(300),
+    "TanSuatDangTin" integer,
+    "TemplateCrawlContext" character varying(300)
+);
+
+
+ALTER TABLE "DanhMucSite" OWNER TO postgres;
+
+--
+-- TOC entry 193 (class 1259 OID 16651)
+-- Name: DanhMucSite_IDDanhMucSite_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE "DanhMucSite_IDDanhMucSite_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE "DanhMucSite_IDDanhMucSite_seq" OWNER TO postgres;
+
+--
+-- TOC entry 2185 (class 0 OID 0)
+-- Dependencies: 193
+-- Name: DanhMucSite_IDDanhMucSite_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE "DanhMucSite_IDDanhMucSite_seq" OWNED BY "DanhMucSite"."IDDanhMucSite";
+
+
+--
+-- TOC entry 182 (class 1259 OID 16481)
+-- Name: TinDaLuu; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE "TinDaLuu" (
+);
+
+
+ALTER TABLE "TinDaLuu" OWNER TO postgres;
+
+--
+-- TOC entry 183 (class 1259 OID 16484)
+-- Name: TinDaXem; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE "TinDaXem" (
+);
+
+
+ALTER TABLE "TinDaXem" OWNER TO postgres;
+
+--
+-- TOC entry 184 (class 1259 OID 16487)
+-- Name: TinDaXoa; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE "TinDaXoa" (
+);
+
+
+ALTER TABLE "TinDaXoa" OWNER TO postgres;
+
+--
+-- TOC entry 185 (class 1259 OID 16490)
+-- Name: TinTuc; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE "TinTuc" (
+    "IDDanhMucSite" integer NOT NULL,
+    "TieuDe" character varying(256),
+    "MoTa" text,
+    "NoiDung" text,
+    "URLNews" text,
+    "URLThumbImage" character varying(256),
+    "URLImage" character varying(256),
+    "ArrayDaXem" bigint[],
+    "ArrayDaXoa" bigint[],
+    "ArrayQuanTam" bigint[],
+    "IDTinTuc" integer NOT NULL,
+    "ThoiGianDangTin" timestamp without time zone
+);
+
+
+ALTER TABLE "TinTuc" OWNER TO postgres;
+
+--
+-- TOC entry 192 (class 1259 OID 16561)
+-- Name: TinTuc_IDTinTuc_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE "TinTuc_IDTinTuc_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE "TinTuc_IDTinTuc_seq" OWNER TO postgres;
+
+--
+-- TOC entry 2186 (class 0 OID 0)
+-- Dependencies: 192
+-- Name: TinTuc_IDTinTuc_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE "TinTuc_IDTinTuc_seq" OWNED BY "TinTuc"."IDTinTuc";
+
+
+--
+-- TOC entry 186 (class 1259 OID 16496)
+-- Name: User; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE "User" (
+    "IDUser" bigint NOT NULL,
+    "TaiKhoan" character varying,
+    "Facebook" character varying(256),
+    "PhoneNumber" character varying(256),
+    "Email" character varying(256),
+    "Password" character varying(1000),
+    "Device" character varying(256),
+    "Token" character varying(256),
+    "NgayTao" timestamp with time zone,
+    "Contact_Tag" character varying(256),
+    "HoTen" character varying(256)
+);
+
+
+ALTER TABLE "User" OWNER TO postgres;
+
+--
+-- TOC entry 187 (class 1259 OID 16502)
+-- Name: User_DanhMucSite; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE "User_DanhMucSite" (
+    "IDUser" bigint NOT NULL,
+    "IDDanhMucSite" integer NOT NULL,
+    "CreatedDate" timestamp without time zone
+);
+
+
+ALTER TABLE "User_DanhMucSite" OWNER TO postgres;
+
+--
+-- TOC entry 188 (class 1259 OID 16505)
+-- Name: danhmuc; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE danhmuc (
+    id integer NOT NULL,
+    name text,
+    icon text,
+    show boolean
+);
+
+
+ALTER TABLE danhmuc OWNER TO postgres;
+
+--
+-- TOC entry 189 (class 1259 OID 16511)
+-- Name: danhmuc_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE danhmuc_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE danhmuc_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2187 (class 0 OID 0)
+-- Dependencies: 189
+-- Name: danhmuc_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE danhmuc_id_seq OWNED BY danhmuc.id;
+
+
+--
+-- TOC entry 190 (class 1259 OID 16513)
+-- Name: news; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE news (
+    id integer NOT NULL,
+    name text NOT NULL,
+    description text NOT NULL,
+    content text NOT NULL,
+    datepub date,
+    imgurl text
+);
+
+
+ALTER TABLE news OWNER TO postgres;
+
+--
+-- TOC entry 191 (class 1259 OID 16519)
+-- Name: news_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE news_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE news_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2188 (class 0 OID 0)
+-- Dependencies: 191
+-- Name: news_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE news_id_seq OWNED BY news.id;
+
+
+--
+-- TOC entry 2033 (class 2604 OID 16656)
+-- Name: IDDanhMucSite; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "DanhMucSite" ALTER COLUMN "IDDanhMucSite" SET DEFAULT nextval('"DanhMucSite_IDDanhMucSite_seq"'::regclass);
+
+
+--
+-- TOC entry 2030 (class 2604 OID 16563)
+-- Name: IDTinTuc; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "TinTuc" ALTER COLUMN "IDTinTuc" SET DEFAULT nextval('"TinTuc_IDTinTuc_seq"'::regclass);
+
+
+--
+-- TOC entry 2031 (class 2604 OID 16521)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY danhmuc ALTER COLUMN id SET DEFAULT nextval('danhmuc_id_seq'::regclass);
+
+
+--
+-- TOC entry 2032 (class 2604 OID 16522)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY news ALTER COLUMN id SET DEFAULT nextval('news_id_seq'::regclass);
+
+
+--
+-- TOC entry 2174 (class 0 OID 16653)
+-- Dependencies: 194
+-- Data for Name: DanhMucSite; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (16, 'http://thanhnien.vn/thoi-su/', 'thời sự', 'thời sự báo thanh niên', NULL, 'header > h2 > a', 'div.summary', NULL, 'figure > a > img', NULL, 'thoi su', NULL, 2, 'header > h2 > a', 'header > div.comment > time', NULL, 'section.cate-list > article.list-article');
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (11, 'http://tuoitre.vn/', 'Tuổi trẻ', NULL, NULL, NULL, NULL, NULL, NULL, 'http://tuoitre.vn/rss/tt-tin-moi-nhat.rss', 'tuoi tre', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTD4AtmT49clIi4nlM7qvbms4Kku78W6SAZXe6mgdCgsrB0Ybk1', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (3, 'http://vietnamnet.vn/', 'VietNamNet', 'Báo điện tử chính thống hàng đầu V', NULL, NULL, NULL, NULL, NULL, 'http://vietnamnet.vn/rss/home.rss', 'viet nam net', 'http://m.img.brothersoft.com/iphone/815/529706815_icon175x175.jpg', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (4, 'http://vietbao.vn/', 'Việt Báo', NULL, NULL, NULL, NULL, NULL, NULL, 'http://vietbao.vn/rss2/tinmoi.rss', 'viet bao', 'http://a3.mzstatic.com/us/r30/Purple62/v4/1f/95/9f/1f959fd3-93fd-f846-e04f-7977ad59cbe6/icon175x175.png', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (5, 'http://dantri.com.vn/', 'Dân Trí', 'Diễn đàn dân trí V', NULL, NULL, NULL, NULL, NULL, 'http://dantri.com.vn/trangchu.rss', 'dan tri', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtiNuhSMj_3yNiCOX2c92CCvxjo1iwcyzf6mue4K66N5fmz_7ZFVAar-I', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (6, 'http://www.vtc.vn/', 'VTC News', 'Hơi thở cuộc sống', NULL, NULL, NULL, NULL, NULL, 'http://www.vtc.vn/home.rss', 'vtc news', 'http://m.img.brothersoft.com/iphone/642/512100642_icon175x175.jpg', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (7, 'http://tintuconline.com.vn/', 'Tin Tức Online', NULL, NULL, NULL, NULL, NULL, NULL, 'http://tintuconline.com.vn/rss/home.rss', 'tin tuc online', 'http://cdn.marketplaceimages.windowsphone.com/v8/images/7cc745ce-f0fb-4a90-8411-55300062f7ef?imageType=ws_icon_medium', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (8, 'http://giaoduc.net.vn/', 'Giáo Dục', 'Báo điện tử giáo dục V', NULL, NULL, NULL, NULL, NULL, 'http://giaoduc.net.vn/RSS/Feed.aspx', 'giao duc', 'https://scontent.fsgn2-1.fna.fbcdn.net/v/t1.0-9/15036310_1122442924478209_8366031459029661101_n.jpg?oh=a3c3336ec84b8e82a5bee6ffe8b86649&oe=58D086F4', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (9, 'http://danviet.vn/', 'Dân Việt', 'Sát cánh cùng nông dân V', NULL, NULL, NULL, NULL, NULL, 'http://danviet.vn/rss/tin-tuc-1001.rss', 'dan viet', 'http://media.tinmoi.vn/2012/08/20/21_35_1345461134_35_Dan%20Viet%20logo%20vuong.jpg', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (10, 'http://www.phunutoday.vn/', 'Phụ Nữ Today', NULL, NULL, NULL, NULL, NULL, NULL, 'http://www.phunutoday.vn/home.rss', 'phu nu today', 'https://scontent.fsgn2-1.fna.fbcdn.net/v/t1.0-9/64655_311183258945069_1449873754_n.jpg?oh=273735aa4c99d6e836e1dc9a981866fe&oe=58B4D39A', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (12, 'http://www.doisongphapluat.com/', 'Đời sống pháp luật', NULL, NULL, NULL, NULL, NULL, NULL, 'http://www.doisongphapluat.com/trang-chu.rss', 'doi song phap luat', 'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQowZOb4kgGxMkpaarglXAwWi8AoAqOf8Zq_vYz77sfkatqhXHN', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (13, 'http://www.nguoiduatin.vn/', 'Người đưa tin', 'Cơ quan của hội luật gia VN', NULL, NULL, NULL, NULL, NULL, 'http://www.nguoiduatin.vn/trang-chu.rss', 'nguoi dua tin', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQK6O6US1HC0l64FRY7gNLQCFXpZGxgAs6pqFmsVZ_Rhx7BRKY6NA', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (14, 'https://guu.vn/', 'Guu.vn', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'guu', 'https://pbs.twimg.com/profile_images/2368601636/1mwwl57970nts2g4smud.png', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (2, 'http://thanhnien.vn/', 'Thanh Niên', 'Diễn đàn thanh niên V', 30, NULL, NULL, NULL, NULL, 'http://thanhnien.vn/rss/home.rss', 'thanh nien', 'http://allaboutwindowsphone.com/images/appicons/235653.png', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (1, 'http://vnexpress.net/', 'VNExpress', 'Báo tiếng Việt nhiều người xem nhất', 30, NULL, NULL, NULL, NULL, 'http://vnexpress.net/rss/tin-moi-nhat.rss', 'vnexpress', 'http://a1039.phobos.apple.com/us/r30/Purple6/v4/2f/89/80/2f89804b-c1d2-5523-4047-77bd551ec935/mzl.ohstmqgv.png', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (15, 'http://vnexpress.net/tin-tuc/thoi-su', 'thời sự', 'VNExpress thời sự', NULL, 'div > h3 > a', 'div > div.news_lead', NULL, 'div > div.thumb > a > img', NULL, 'thoi su', NULL, 1, 'div > h3 > a', 'div.block_timer_share > div.block_timer.left.txt_666', NULL, 'ul.list_news > li');
+
+
+--
+-- TOC entry 2189 (class 0 OID 0)
+-- Dependencies: 193
+-- Name: DanhMucSite_IDDanhMucSite_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"DanhMucSite_IDDanhMucSite_seq"', 16, true);
+
+
+--
+-- TOC entry 2162 (class 0 OID 16481)
+-- Dependencies: 182
+-- Data for Name: TinDaLuu; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2163 (class 0 OID 16484)
+-- Dependencies: 183
+-- Data for Name: TinDaXem; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2164 (class 0 OID 16487)
+-- Dependencies: 184
+-- Data for Name: TinDaXoa; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2165 (class 0 OID 16490)
+-- Dependencies: 185
+-- Data for Name: TinTuc; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2190 (class 0 OID 0)
+-- Dependencies: 192
+-- Name: TinTuc_IDTinTuc_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"TinTuc_IDTinTuc_seq"', 1, false);
+
+
+--
+-- TOC entry 2166 (class 0 OID 16496)
+-- Dependencies: 186
+-- Data for Name: User; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO "User" ("IDUser", "TaiKhoan", "Facebook", "PhoneNumber", "Email", "Password", "Device", "Token", "NgayTao", "Contact_Tag", "HoTen") VALUES (1, 'admin', NULL, NULL, NULL, '1234', NULL, NULL, NULL, NULL, NULL);
+
+
+--
+-- TOC entry 2167 (class 0 OID 16502)
+-- Dependencies: 187
+-- Data for Name: User_DanhMucSite; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2168 (class 0 OID 16505)
+-- Dependencies: 188
+-- Data for Name: danhmuc; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO danhmuc (id, name, icon, show) VALUES (14, 'ABC News', 'http://a5.mzstatic.com/us/r30/Purple71/v4/22/9f/23/229f23a9-5988-37aa-3a25-6bb8629cd9df/icon175x175.png', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (1, 'CNN', 'https://cdn2.iconfinder.com/data/icons/metro-uinvert-dock/128/CNN.png', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (11, 'Wall Street Journal', 'https://s1.mzstatic.com/us/r30/Purple69/v4/b5/86/cd/b586cd7e-d971-1b98-c479-2cd5911dd852/icon128x128.jpeg', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (6, 'USA Today', 'http://dl.myket.ir/imageresizing/icon/small/com.usatoday.android.news.png', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (9, 'Times of India', 'http://pbs.twimg.com/profile_images/1282407636/icon_512_reasonably_small.png', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (15, 'AnandTech', 'http://images.anandtech.com/reviews/tablets/apple/ipad3/icon144upscale.png', true);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (18, 'Thanh niên', 'http://allaboutwindowsphone.com/images/appicons/235653.png', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (5, 'Washington Post', 'http://media.148apps.com/icons/243436/243436_180.jpg', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (12, 'MSNBC', 'http://media1.s-nbcnews.com/i/MSNBC/Components/Interactives/_swf/_shared/msnbc-facebooklike-icon.jpg', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (7, 'NBC News', 'http://pbs.twimg.com/profile_images/721554521957138436/tTocueCd_reasonably_small.jpg', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (3, 'New York Times', 'http://findicons.com/files/icons/2796/metro_uinvert_dock/128/the_new_york_times_alt.png', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (10, 'Daily Mail', 'https://dl.myket.ir/newresizing/resize/medium/png/icon/com.dailymail.online.png', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (4, 'Fox News', 'http://cdn-img.easyicon.net/png/10909/1090908.gif', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (16, 'Dân Trí', 'https://chungcucaocap.vn/files/assets/icon175x175.png', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (2, 'BBC News', 'http://www.androiddrawer.com/wp-content/uploads/2014/08/BBC-News-icon-e1415350808419.png', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (8, 'Guardian', 'http://icons.iconarchive.com/icons/martz90/hex/128/guardian-icon.png', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (17, 'tuổi trẻ', 'http://phongcongchung4tphcm.vn/content/uploaduser/medium/5341621782_bao_tuoi_tre_online.jpg', true);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (13, 'Los Angeles Times', 'http://www.trikkestl.com/uploads/4/1/5/7/41574071/7866911_orig.gif', false);
+
+
+--
+-- TOC entry 2191 (class 0 OID 0)
+-- Dependencies: 189
+-- Name: danhmuc_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('danhmuc_id_seq', 18, true);
+
+
+--
+-- TOC entry 2170 (class 0 OID 16513)
+-- Dependencies: 190
+-- Data for Name: news; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO news (id, name, description, content, datepub, imgurl) VALUES (2, 'Điều khu trục hạm tới Hoàng Sa, Mỹ "phá vỡ im lặng" sau phán quyết Biển Đông', 'Việc Mỹ điều tàu chiến tiến sát các đảo ở Hoàng Sa bị Trung Quốc chiếm giữ trái phép cho ...', 'Sự xuất hiện tàu tuần tra của Mỹ ở Biển Đông cho thấy Mỹ dùng thời điểm này để thể hiện chính sách của mình về hiện trạng vùng biển ở Biển Đông. Chương trình hoạt động bảo vệ tự do hàng hải (FONOP) vẫn đang tiếp diễn, đặc biệt sau khi Toà trọng tài ra phán quyết. Bởi vì vẫn có một sự im lặng sau ngày 12/7 bất chấp có nhiều trông đợi. Mọi người băn khoăn khi nào có thêm chuyến tuần tra, vì thế tôi nghĩ đây là sự thể hiện của Mỹ rằng họ vẫn thực hiện điều đó, Giáo sư Jay Batongbacal, Giám đốc Viện Nghiên cứu các Vấn đề Hàng hải và Luật Biển Philippines, Đại học Philippines, đánh giá khi trao đổi với VnExpress.Tàu khu trục có tên lửa dẫn đường USS Decatur của hải quân Mỹ hôm qua tiến sát các đảo thuộc quần đảo Hoàng Sa ở Biển Đông. Con tàu đã đến gần hai đảo Tri Tôn và Phú Lâm, thuộc quần đảo Hoàng Sa của Việt Nam mà Trung Quốc đang chiếm đóng trái phép. Tàu này không vào bên trong vùng 12 hải lý quanh các đảo. Ba tàu Trung Quốc đã theo dõi nhưng tất cả tương tác giữa hai bên đều diễn ra an toàn.', '2016-03-24', 'http://img.f30.vnecdn.net/2016/10/22/decatur-1477111938_180x108.jpg');
+INSERT INTO news (id, name, description, content, datepub, imgurl) VALUES (3, 'Sức mạnh tàu chiến Mỹ vừa tuần tra gần Hoàng Sa', 'Khu trục hạm USS Decatur vừa tuần tra gần Hoàng Sa thuộc một trong những lớp tàu ...', 'Đây là lần thứ tư Mỹ điều tàu đến Biển Đông để thách thức tuyên bố chủ quyền của Trung Quốc trong năm qua và là lần đầu tiên kể từ hồi tháng 5. Trong ba lần trước, các tàu chiến Mỹ đều đi vào khu vực 12 hải lý quanh các hòn đảo và khiến Trung Quốc tức giận. Sau khi Toà trọng tài quốc tế ra phán quyết, bác bỏ yêu sách "đường lưỡi bò" của Trung Quốc ở  Biển Đông, giữa tháng 7, nước này tuyên bố không chấp nhận kết luận, bất chấp sự phản đối của các nước láng giềng và cộng đồng quốc tế. Về việc tàu Mỹ không đi vào trong vùng 12 hải lý của các đảo, Tiến sĩ Batongbacal nhận đình chuyến tàu tra bảo vệ tự do hàng hải không nhất thiết lúc nào cũng đi vào phạm vi 12 hải lý của một hòn đảo hay một thực thể. Hoạt động này phụ thuộc vào quyền (của nước thực hiện) và địa điểm. ', '2016-04-22', 'http://img.f30.vnecdn.net/2016/10/22/1-1477113038_180x108.jpg');
+INSERT INTO news (id, name, description, content, datepub, imgurl) VALUES (4, 'Nhiều tay súng đội mũ trùm đầu đe dọa quốc hội Venezuela', 'Khoảng 7 đến 8 tay súng đã cố gắng đột nhập văn phòng ủy ban kiểm soát tài chính của ...', 'Với cuộc tuần tra ở Hoàng Sa lần này, tất cả các đảo và vùng biển giữa chúng đều bị Trung Quốc bao vây trên các ranh giới như là một thực thể đơn. Trung Quốc cho rằng các đảo trong quần đảo Hoàng Sa nằm trong vùng nội thủy của họ, nơi được hưởng quy chế như như vùng lãnh thổ trên đất liền theo Công ước Liên Hợp Quốc về Luật biển (UNCLOS) năm 1982. Vì thế chuyến tuần tra của Mỹ được thiết kế để khẳng định không có vùng nội thủy nào ngoài vùng biển quốc tế ở đây. Họ không cần đi vào vùng 12 hải lý của bất cứ đảo nào ở Hoàng Sa. Mỹ đang cho thấy vùng biển giữa các đảo (và vùng xung quanh 12 hải lý của mỗi đảo) là vùng biển quốc tế.', '2016-09-03', 'http://img.f29.vnecdn.net/2016/10/22/venezuela-1477117126_180x108.jpg');
+INSERT INTO news (id, name, description, content, datepub, imgurl) VALUES (8, 'Trực thăng Mi-8 rơi ở Nga, 19 người tử nạn', 'Sáng 22-10, một trực thăng Mi-8 rơi xuống bán đảo Yamal, Siberia (Nga) giữa thời tiết xấu khiến 19 người thiệt mạng...', 'Clinton chế nhạo Trump. Sau khi ông Trump tuyên bố Tổng thống Nga Vladimir Putin "không dành bất kỳ sự tôn trọng nào" cho Clinton, bà đã khéo léo lợi dụng câu chữ của đối thủ để phản pháo: "Ông ta muốn một con rối làm tổng thống Mỹ hơn". Vứt bỏ kịch bản, bà Clinton đã tự biến mình thành một "kẻ uy hiếp", liên tục dùng chính những chiến thuật đã trở thành đặc trưng của Donald Trump để chống lại ông, New York Times bình luận.', '2016-04-22', 'http://static.new.tuoitre.vn/tto/i/s146/2016/10/22/truc-thang-1477108571.jpg');
+INSERT INTO news (id, name, description, content, datepub, imgurl) VALUES (9, 'Nhiều tay súng đội mũ trùm đầu đe dọa quốc hội Venezuela', 'Khoảng 7 đến 8 tay súng đã cố gắng đột nhập văn phòng ủy ban kiểm soát tài chính của ...', 'Trong khi đó, ứng viên chạy đua vào Nhà Trắng đảng Cộng hòa, trên sân khấu tranh luận tại Đại học Nevada, Las Vegas, cho thấy một hình ảnh rất khác so với những gì ông thể hiện suốt 16 tháng qua: bình tĩnh và kiềm chế một cách kỳ lạ. Người xem hãn hữu mới thấy ông lăng mạ hay ngắt lời đối phương.Trong phần tranh luận với chủ đề nhập cư, bà Clinton tung ra một cú đòn hiểm, quả quyết rằng ông Trump đã lợi dụng người lao động không có giấy tờ để xây tòa nhà Trump Tower, thậm chí đe dọa trục xuất những người này.', '2016-10-11', 'http://static.new.tuoitre.vn/tto/i/s146/2016/10/23/iraq-1477179909.jpg');
+INSERT INTO news (id, name, description, content, datepub, imgurl) VALUES (26, 'Quan hệ Việt - Mỹ ra sao khi Mỹ có tổng thống mới?', 'Nếu bà Hillary Clinton đắc cử Tổng thống thì việc xoay trục sang châu Á-Thái Bình Dương sẽ tiếp tục được thúc đẩy mạnh mẽ.', 'Đây là nhận định của Phó Giáo sư, Tiến sĩ Cù Chí Lợi, Viện trưởng Viện Nghiên cứu châu Mỹ thuộc Viện Hàn lâm Khoa học Xã hội Việt Nam trong cuộc trao đổi với phóng viên Dân trí xung quanh các vấn đề liên quan tới cuộc bầu cử tổng thống Mỹ ngày 8/11.
+            Bà Clinton sẽ "rắn" với Trung Quốc về Biển Đông
+
+Hiện cuộc bầu cử Tổng thống Mỹ đã bước vào giai đoạn cuối cùng. Về cơ bản, bà Clinton đang có nhiều cơ hội giành chiến thắng hơn. Nhiều người cho rằng khu vực châu Á-Thái Bình Dương sẽ được chú ý hơn nếu bà Clinton thắng cử. Vậy ý kiến của ông ra sao?
+
+Bà Hillary Clinton và Tổng thống Barack Obama chính là tác giả của chiến lược xoay trục của Mỹ sang châu Á-Thái Bình Dương. Bà cũng có một quá trình sát cánh với Tổng thống Obama trong chính sách đối ngoại khi còn làm ngoại trưởng Mỹ. Vì thế, quan điểm của bà ấy với chiến lược này là rất rõ ràng. Nếu bà Clinton đắc cử Tổng thống thì việc xoay trục sẽ được tiếp tục thực hiện, thậm chí sẽ được đẩy mạnh hơn so với thời ông Obama.', '2016-11-08', 'https://dantri4.vcmedia.vn/b1f4d804b1/2016/11/07/hil-1477648200159-png-1478513405759.jpg');
+INSERT INTO news (id, name, description, content, datepub, imgurl) VALUES (27, 'Bà Michelle Obama lần đầu tiếp phu nhân Tổng thống đắc cử Trump', 'Đệ nhất phu nhân Michelle Obama hôm qua 10/11 đã tiếp phu nhân của Tổng thống đắc cử Donald Trump tại Nhà Trắng', 'NBC dẫn lời người phát ngôn Nhà Trắng Josh Earnest cho biết đây là cuộc gặp đầu tiên giữa hai phu nhân của tổng thống đương nhiệm và tổng thống đắc cử, diễn ra tại nơi ở riêng của bà Michelle Obama ở Nhà Trắng. Theo ông Earnest, bà Michelle Obama và bà Melania Trump đã uống trà cùng nhau trong lúc trao đổi về kinh nghiệm nuôi dạy con cái cũng như làm cha mẹ tốt tại Nhà Trắng.
+
+Bà Obama sau đó đã dẫn đệ nhất phu nhân tương lai đi thăm quan một vòng quanh nơi ở của bà tại Nhà Trắng cùng người quản gia Bill Allman. Sau đó, hai người cùng đến Phòng Bầu Dục để gặp Tổng thống Barack Obama và Tổng thống đắc cử Donald Trump. Đây cũng là lần đầu tiên ông Obama và ông Trump gặp nhau tại Nhà Trắng và cuộc nói chuyện giữa hai bên đã kéo dài tới 90 phút. Cả tổng thống đương nhiệm và tổng thống mới đắc cử đều bày tỏ sự vui vẻ trong cuộc gặp và khẳng định sẵn sàng chuẩn bị cho quá trình chuyển giao quyền lực trong thời gian tới.', '2016-11-11', 'https://dantri4.vcmedia.vn/thumb_w/640/756edd3768/2016/11/11/161110-first-ladies-mbe-508p-ff2f4b9244dc95a04246c19551d7b99b-nbcnews-fp-1200-800-1478827789836.jpg');
+
+
+--
+-- TOC entry 2192 (class 0 OID 0)
+-- Dependencies: 191
+-- Name: news_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('news_id_seq', 28, true);
+
+
+--
+-- TOC entry 2045 (class 2606 OID 16661)
+-- Name: DanhMucSite_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "DanhMucSite"
+    ADD CONSTRAINT "DanhMucSite_pkey" PRIMARY KEY ("IDDanhMucSite");
+
+
+--
+-- TOC entry 2035 (class 2606 OID 16565)
+-- Name: TinTuc_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "TinTuc"
+    ADD CONSTRAINT "TinTuc_pkey" PRIMARY KEY ("IDTinTuc");
+
+
+--
+-- TOC entry 2039 (class 2606 OID 16529)
+-- Name: User_DanhMucSite_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "User_DanhMucSite"
+    ADD CONSTRAINT "User_DanhMucSite_pkey" PRIMARY KEY ("IDUser", "IDDanhMucSite");
+
+
+--
+-- TOC entry 2037 (class 2606 OID 16531)
+-- Name: User_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "User"
+    ADD CONSTRAINT "User_pkey" PRIMARY KEY ("IDUser");
+
+
+--
+-- TOC entry 2041 (class 2606 OID 16533)
+-- Name: danhmuc_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY danhmuc
+    ADD CONSTRAINT danhmuc_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2043 (class 2606 OID 16535)
+-- Name: news_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY news
+    ADD CONSTRAINT news_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2047 (class 2620 OID 16585)
+-- Name: new_tieude; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER new_tieude BEFORE INSERT ON "TinTuc" FOR EACH ROW EXECUTE PROCEDURE check_tintuc_tieude();
+
+
+--
+-- TOC entry 2046 (class 2606 OID 16546)
+-- Name: User_DanhMucSite_IDUser_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "User_DanhMucSite"
+    ADD CONSTRAINT "User_DanhMucSite_IDUser_fkey" FOREIGN KEY ("IDUser") REFERENCES "User"("IDUser") ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 2182 (class 0 OID 0)
+-- Dependencies: 7
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+-- Completed on 2016-12-07 18:37:20 ICT
+
+--
+-- PostgreSQL database dump complete
+--
+
