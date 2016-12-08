@@ -1,0 +1,9 @@
+{
+    "paging": {
+        "limit": 10,
+        "offset": 0
+    },
+    "logging": {
+        "filename": "server.log"
+    }
+}

@@ -24,7 +24,9 @@ export class Gulpfile {
     tsProject: gts.Project = gts.createProject('./tsconfig.json');
     // thư mục sẽ chứa các file js đã được compile
     jsDest: string = 'dist';
-    filesToMove: string[] = [];
+    filesToMove: string[] = [
+        "./src/config.json"
+    ];
 
     /**
      * task này sẽ compile các file
