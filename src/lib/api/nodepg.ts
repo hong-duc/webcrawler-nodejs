@@ -2,6 +2,7 @@ import { Pool, PoolConfig, QueryResult } from 'pg';
 import path = require('path');
 import * as Promise from 'bluebird';
 let config = require(path.join(__dirname, "..", "..", 'config.json'));
+// import { appDebug } from '../debug';
 
 // khởi tạo 2 giá trị đầu lấy từ config
 let limit = config.paging.limit;
@@ -20,45 +21,55 @@ let poolConfig: PoolConfig = {
 let pool = new Pool(poolConfig);
 
 
-let soLuongDanhMuc = () => {
-    let queryText = ``;
+let soLuongDanhMuc = (): Promise<QueryResult> => {
+    let queryText = `SELECT reltuples AS approximate_row_count FROM pg_class WHERE relname = 'DanhMucSite'`;
+
+    return Promise.resolve(pool.query(queryText));
+}
+
+let layLinkDanhMucCon = (): Promise<QueryResult> => {
+    return soLuongDanhMuc().then(result => {
+        let rowCount = result.rows[0].approximate_row_count;
+        if (offset > (rowCount + 2)) {
+            offset = 0;
+        }
+    }).then(() => {
+        return layLinkDanhMucSite();
+    })
 }
 
 /**
- * @desc gọi xuống csdl và lấy danh sách các danh mục con
+ * @desc gọi xuống csdl và lấy danh sách các danh mục
  * @return danh sách các danh mục con trong Promise
  */
-let layLinkDanhMucCon = (): Promise<QueryResult> => {
-    console.log('offset ' + offset)
+let layLinkDanhMucSite = (): Promise<QueryResult> => {
+    // console.log('offset ' + offset)
+    // appDebug.log('offset ' + offset)
+
     let queryText = `
 SELECT 
   dmb."DuongDan", 
-  dma.soluong, 
+  dmb."SoLuongTinDuyetTim" as soluong, 
   dmb."IDDanhMucSite", 
   dmb."TempateCrawlTieuDe", 
   dmb."TempateCrawlMoTa",  
   dmb."TempateCrawlImage", 
   dmb."TemplateCrawUrl", 
   dmb."TemplateCrawlNgayDang",
-  dmb."TemplateCrawlContext"
+  dmb."TemplateCrawlContext",
+  dmb."ParentID"
 FROM 
-  public."DanhMucSite" as dmb,
-  (SELECT "IDDanhMucSite" as id,"SoLuongTinDuyetTim" as soluong FROM "DanhMucSite" WHERE "ParentID" = -1) as dma
-WHERE 
-  dmb."ParentID" = dma.id
+  public."DanhMucSite" as dmb
 LIMIT ${limit}
 OFFSET ${offset};
 `;
 
 
-    return Promise.resolve(pool.query(queryText).then((result) => {
-        if (result.rowCount === 0) {
-            offset = 0;
-        } else {
-            offset += limit;
-        }
+    return Promise.resolve(pool.query(queryText)).then(result => {
+        // console.log(result.rowCount)
+        offset += limit;
         return result;
-    }));
+    });
 }
 
 let persistDataBase = (): Promise<QueryResult> => {
@@ -74,4 +85,4 @@ let persistDataBase = (): Promise<QueryResult> => {
 }
 
 
-export { pool, layLinkDanhMucCon, persistDataBase };
+export { pool, layLinkDanhMucCon, persistDataBase, soLuongDanhMuc };

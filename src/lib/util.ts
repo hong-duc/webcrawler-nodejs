@@ -2,6 +2,8 @@ import * as request from 'request';
 import mkdirp = require('mkdirp');
 import * as fs from 'fs';
 import json2csv = require('json2csv');
+import { logger } from './logging';
+// import { appDebug } from './debug';
 
 
 interface IDanhMucSite {
@@ -14,6 +16,7 @@ interface IDanhMucSite {
     TemplateCrawUrl: string;
     TemplateCrawlNgayDang: string;
     TemplateCrawlContext: string;
+    ParentID: number;
 }
 
 interface ITinTuc {
@@ -141,6 +144,7 @@ let taoTinTuc = (IDDanhMucSite: number, title: string, mota: string, newsUrl: st
  */
 let createCSVFile = (tintucs: ITinTuc[]) => {
     // console.log(tintucs[0].URLNews);
+    // appDebug.log(tintucs[0].URLNews)
     try {
         let result = json2csv({
             data: tintucs,
@@ -149,18 +153,14 @@ let createCSVFile = (tintucs: ITinTuc[]) => {
             doubleQuotes: '',
         });
 
+        // đổi hết "" thành ''
         result = result.replace(/""/g, `''`);
-
-        // if (fs.existsSync('tmp.csv')) {
-        //     fs.writeFileSync('tmp_2.csv', result);
-        // } else {
-        //     fs.writeFileSync('tmp.csv', result);
-        // }
-        // console.log(result);
-         fs.writeFileSync('tmp.csv', result);
+        fs.writeFileSync('tmp.csv', result);
 
     } catch (error) {
-        console.log(error);
+        // console.log(error);
+        // appDebug.log(error)
+        logger.error(error.message)
     }
 
 }

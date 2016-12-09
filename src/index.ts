@@ -2,7 +2,8 @@ import * as cheerio from 'cheerio';
 import * as request from 'request';
 import * as rp from 'request-promise';
 import * as Promise from 'bluebird';
-import debug = require('debug');
+import { logger } from './lib/logging';
+// import { appDebug } from './lib/debug';
 import { pool, layLinkDanhMucCon, persistDataBase } from './lib/api/nodepg';
 import {
     domainToName,
@@ -21,9 +22,9 @@ import {
 
 
 
-process.on('unhandledRejection', function (e) {
-    console.log(e.message, e.stack)
-})
+// process.on('unhandledRejection', function (e) {
+//     console.log(e.message, e.stack)
+// })
 
 
 /**
@@ -81,7 +82,7 @@ let crawLingHtml = (html, danhMucCon: IDanhMucSite): Promise<any> => {
                 let tintuc = taoTinTuc(danhMucCon.IDDanhMucSite, title, mota, newsUrl, imageUrl, ngayDangTin);
                 res(tintuc);
             }).catch(error => {
-                console.error('Error: ', error);
+                logger.error(error.message);
             })
         })
         arrayPromise.push(p);
@@ -92,15 +93,14 @@ let crawLingHtml = (html, danhMucCon: IDanhMucSite): Promise<any> => {
     return Promise.all<ITinTuc>(arrayPromise)
         .then(tintucs => {
             // console.log(tintucs.length);
+            // appDebug.log(tintucs.length)
             createCSVFile(tintucs);
             return persistDataBase();
         })
-        .then(result => {
-            console.log(result.rowCount);
-        })
         .catch(error => {
-            console.error('Error: ', error)
+            // console.error('Error: ', error)
             // return Promise.reject(error);
+            logger.error(error.message)
         })
 }
 
@@ -110,12 +110,18 @@ let crawLingHtml = (html, danhMucCon: IDanhMucSite): Promise<any> => {
  * đây là nơi tất cả bắt đầu
  */
 let startRequest = () => {
-    console.log('start request');
+    // console.log('start request');
+    // appDebug.log('start request')
+    logger.info('start crawling')
     let arr = [];
 
     layLinkDanhMucCon().then((result) => {
         let danhmucsite = result.rows as IDanhMucSite[];
+        // console.log(JSON.stringify(result.rows[0]))
         danhmucsite.forEach(dm => {
+            if(dm.ParentID === -1){
+                return;
+            }
             request(dm.DuongDan, (error, response, html) => {
                 if (error) {
                     console.log(error);
@@ -135,5 +141,5 @@ let startRequest = () => {
 }
 
 startRequest();
-
+console.log('server started');
 
