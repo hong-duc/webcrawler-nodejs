@@ -2,7 +2,7 @@ import { Pool, PoolConfig, QueryResult } from 'pg';
 import path = require('path');
 import * as Promise from 'bluebird';
 let config = require(path.join(__dirname, "..", "..", 'config.json'));
-// import { appDebug } from '../debug';
+import { appDebug } from '../debug';
 
 // khởi tạo 2 giá trị đầu lấy từ config
 let limit = config.paging.limit;
@@ -44,7 +44,7 @@ let layLinkDanhMucCon = (): Promise<QueryResult> => {
  */
 let layLinkDanhMucSite = (): Promise<QueryResult> => {
     // console.log('offset ' + offset)
-    // appDebug.log('offset ' + offset)
+    appDebug('offset ' + offset)
 
     let queryText = `
 SELECT 

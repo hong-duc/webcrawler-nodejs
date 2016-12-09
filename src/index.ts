@@ -3,7 +3,7 @@ import * as request from 'request';
 import * as rp from 'request-promise';
 import * as Promise from 'bluebird';
 import { logger } from './lib/logging';
-// import { appDebug } from './lib/debug';
+import { appDebug } from './lib/debug';
 import { pool, layLinkDanhMucCon, persistDataBase } from './lib/api/nodepg';
 import {
     domainToName,
@@ -93,7 +93,7 @@ let crawLingHtml = (html, danhMucCon: IDanhMucSite): Promise<any> => {
     return Promise.all<ITinTuc>(arrayPromise)
         .then(tintucs => {
             // console.log(tintucs.length);
-            // appDebug.log(tintucs.length)
+            appDebug(tintucs.length)
             createCSVFile(tintucs);
             return persistDataBase();
         })
@@ -111,7 +111,7 @@ let crawLingHtml = (html, danhMucCon: IDanhMucSite): Promise<any> => {
  */
 let startRequest = () => {
     // console.log('start request');
-    // appDebug.log('start request')
+    appDebug('start request')
     logger.info('start crawling')
     let arr = [];
 

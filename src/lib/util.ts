@@ -3,7 +3,7 @@ import mkdirp = require('mkdirp');
 import * as fs from 'fs';
 import json2csv = require('json2csv');
 import { logger } from './logging';
-// import { appDebug } from './debug';
+import { appDebug } from './debug';
 
 
 interface IDanhMucSite {
@@ -144,7 +144,7 @@ let taoTinTuc = (IDDanhMucSite: number, title: string, mota: string, newsUrl: st
  */
 let createCSVFile = (tintucs: ITinTuc[]) => {
     // console.log(tintucs[0].URLNews);
-    // appDebug.log(tintucs[0].URLNews)
+    appDebug(tintucs[0].URLNews)
     try {
         let result = json2csv({
             data: tintucs,
@@ -159,7 +159,7 @@ let createCSVFile = (tintucs: ITinTuc[]) => {
 
     } catch (error) {
         // console.log(error);
-        // appDebug.log(error)
+        appDebug(error)
         logger.error(error.message)
     }
 
