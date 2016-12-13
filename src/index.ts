@@ -5,6 +5,7 @@ import * as Promise from 'bluebird';
 import { logger } from './lib/logging';
 import { appDebug } from './lib/debug';
 import { pool, layLinkDanhMucCon, persistDataBase } from './lib/api/nodepg';
+import * as momentjs from 'moment';
 import {
     domainToName,
     extractHttpAndDomainOnly,
@@ -40,13 +41,17 @@ let crawLingHtml = (html, danhMucCon: IDanhMucSite): Promise<any> => {
         }
 
         let p = new Promise<ITinTuc>((res, rej) => {
+            // lấy các mô tả  cần thiết
             let title = $(element).find(danhMucCon.TempateCrawlTieuDe).text().trim();
             let mota = $(element).find(danhMucCon.TempateCrawlMoTa).text().trim();
             let newsUrl = $(element).find(danhMucCon.TemplateCrawUrl).attr('href');
+            // thêm http vào đường dẫn nếu ko có
             newsUrl = addDomain(newsUrl, extractHttpAndDomainOnly(danhMucCon.DuongDan));
             let imageUrl = $(element).find(danhMucCon.TempateCrawlImage).attr('src').trim();
             let ngayDangTin = $(element).find(danhMucCon.TemplateCrawlNgayDang).text().trim();
+            // download hình ảnh
             let rpImage = download(imageUrl, danhMucCon.DuongDan);
+            // download ngày đăng tin
             let rpDate: Promise<string>;
 
             if (ngayDangTin === '') {
@@ -72,17 +77,22 @@ let crawLingHtml = (html, danhMucCon: IDanhMucSite): Promise<any> => {
                     return ngayDangTin;
                 }
             }).then(result => {
+                appDebug('result: ' + result)
                 if (result !== '') {
-                    let date = new Date(result);
-                    ngayDangTin = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+                    let mm = momentjs(result, 'DD/MM/YYYY');
+                    appDebug(`moment: ${mm.format('YYYY-MM-DD HH:mm:ss')}`)
+                    ngayDangTin = mm.format('YYYY-MM-DD HH:mm:ss');
                 } else {
-                    ngayDangTin = result;
+                    ngayDangTin = momentjs().format('YYYY-MM-DD HH:mm:ss');
                 }
+                appDebug('before tintuc: ' + ngayDangTin)
             }).then(() => {
                 let tintuc = taoTinTuc(danhMucCon.IDDanhMucSite, title, mota, newsUrl, imageUrl, ngayDangTin);
+                appDebug('after tintuc: ' + tintuc.ThoiGianDangTin)
                 res(tintuc);
-            }).catch(error => {
-                logger.error(error.message);
+            }).catch((error: Error) => {
+                appDebug(`Error: ${error.message}; ${error.stack}`)
+                logger.error(`khi dang craw tin: ${error.message}; stack-trace: ${error.stack}`);
             })
         })
         arrayPromise.push(p);
@@ -92,15 +102,14 @@ let crawLingHtml = (html, danhMucCon: IDanhMucSite): Promise<any> => {
 
     return Promise.all<ITinTuc>(arrayPromise)
         .then(tintucs => {
-            // console.log(tintucs.length);
-            appDebug(tintucs.length)
+
             createCSVFile(tintucs);
             return persistDataBase();
         })
         .catch(error => {
             // console.error('Error: ', error)
             // return Promise.reject(error);
-            logger.error(error.message)
+            logger.error(`khi chuan bi luu csdl: ${error.message}; stack-trace: ${error.stack}`)
         })
 }
 
@@ -119,12 +128,12 @@ let startRequest = () => {
         let danhmucsite = result.rows as IDanhMucSite[];
         // console.log(JSON.stringify(result.rows[0]))
         danhmucsite.forEach(dm => {
-            if(dm.ParentID === -1){
+            if (dm.ParentID === -1) {
                 return;
             }
             request(dm.DuongDan, (error, response, html) => {
                 if (error) {
-                    console.log(error);
+                    logger.error('khi dang request: ' + error.message)
                     return;
                 }
 
@@ -134,7 +143,7 @@ let startRequest = () => {
 
         Promise.all(arr)
             .then(() => {
-                setTimeout(startRequest, 10000);
+                setTimeout(startRequest, 3000);
             })
     })
 

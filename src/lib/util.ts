@@ -3,7 +3,7 @@ import mkdirp = require('mkdirp');
 import * as fs from 'fs';
 import json2csv = require('json2csv');
 import { logger } from './logging';
-import { appDebug } from './debug';
+import { utilDebug } from './debug';
 
 
 interface IDanhMucSite {
@@ -82,7 +82,7 @@ let addDomain = (url: string, domain: string): string => {
 let extractDate = (string: string): string => {
     let regex = /\d+\/\d+\/\d+/g;
     let result = string.match(regex);
-    return result ? result[0] : "";
+    return result.length !== 0 ? result[0] : "";
 }
 
 /**
@@ -143,8 +143,6 @@ let taoTinTuc = (IDDanhMucSite: number, title: string, mota: string, newsUrl: st
  * @desc tạo ra file csv
  */
 let createCSVFile = (tintucs: ITinTuc[]) => {
-    // console.log(tintucs[0].URLNews);
-    appDebug(tintucs[0].URLNews)
     try {
         let result = json2csv({
             data: tintucs,
@@ -153,14 +151,21 @@ let createCSVFile = (tintucs: ITinTuc[]) => {
             doubleQuotes: '',
         });
 
+        // run only in debug mode
+        if(process.env.DEBUG && process.env.DEBUG === 'util'){
+            tintucs.forEach(tintuc => {
+                console.log(tintuc.ThoiGianDangTin);
+            })
+        }
+
         // đổi hết "" thành ''
         result = result.replace(/""/g, `''`);
         fs.writeFileSync('tmp.csv', result);
 
     } catch (error) {
         // console.log(error);
-        appDebug(error)
-        logger.error(error.message)
+        utilDebug('loi khi tao csv file: ' + error.message)
+        logger.error(`khi dang tao csv file: ${error.message}; stack-trace: ${error.stack}`)
     }
 
 }
