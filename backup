@@ -1,0 +1,681 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.5.5
+-- Dumped by pg_dump version 9.5.5
+
+-- Started on 2016-12-09 18:55:40 ICT
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 2179 (class 1262 OID 12379)
+-- Name: postgres; Type: DATABASE; Schema: -; Owner: postgres
+--
+
+CREATE DATABASE postgres WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8';
+
+
+ALTER DATABASE postgres OWNER TO postgres;
+
+\connect postgres
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 2180 (class 1262 OID 12379)
+-- Dependencies: 2179
+-- Name: postgres; Type: COMMENT; Schema: -; Owner: postgres
+--
+
+COMMENT ON DATABASE postgres IS 'default administrative connection database';
+
+
+--
+-- TOC entry 2 (class 3079 OID 12361)
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2183 (class 0 OID 0)
+-- Dependencies: 2
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- TOC entry 1 (class 3079 OID 16466)
+-- Name: adminpack; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS adminpack WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2184 (class 0 OID 0)
+-- Dependencies: 1
+-- Name: EXTENSION adminpack; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION adminpack IS 'administrative functions for PostgreSQL';
+
+
+SET search_path = public, pg_catalog;
+
+--
+-- TOC entry 195 (class 1255 OID 16584)
+-- Name: check_tintuc_tieude(); Type: FUNCTION; Schema: public; Owner: duc
+--
+
+CREATE FUNCTION check_tintuc_tieude() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+
+	IF EXISTS (SELECT "IDTinTuc" FROM "TinTuc" WHERE "TieuDe" = NEW."TieuDe") THEN
+		RETURN NULL;
+	END IF;
+		RETURN NEW;
+
+END;
+$$;
+
+
+ALTER FUNCTION public.check_tintuc_tieude() OWNER TO duc;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 194 (class 1259 OID 16653)
+-- Name: DanhMucSite; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE "DanhMucSite" (
+    "IDDanhMucSite" integer NOT NULL,
+    "DuongDan" character varying(500),
+    "TenGoi" character varying(500),
+    "MoTa" character varying(3000),
+    "SoLuongTinDuyetTim" integer,
+    "TempateCrawlTieuDe" character varying(256),
+    "TempateCrawlMoTa" character varying(256),
+    "TempateCrawlNoiDung" character varying(256),
+    "TempateCrawlImage" character varying(256),
+    "LinkRSS" character varying(256),
+    "TenGoi_KoDau" character varying(500),
+    "Icon" character varying(1000),
+    "ParentID" integer,
+    "TemplateCrawUrl" character varying(200),
+    "TemplateCrawlNgayDang" character varying(300),
+    "TanSuatDangTin" integer,
+    "TemplateCrawlContext" character varying(300)
+);
+
+
+ALTER TABLE "DanhMucSite" OWNER TO postgres;
+
+--
+-- TOC entry 193 (class 1259 OID 16651)
+-- Name: DanhMucSite_IDDanhMucSite_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE "DanhMucSite_IDDanhMucSite_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE "DanhMucSite_IDDanhMucSite_seq" OWNER TO postgres;
+
+--
+-- TOC entry 2185 (class 0 OID 0)
+-- Dependencies: 193
+-- Name: DanhMucSite_IDDanhMucSite_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE "DanhMucSite_IDDanhMucSite_seq" OWNED BY "DanhMucSite"."IDDanhMucSite";
+
+
+--
+-- TOC entry 182 (class 1259 OID 16481)
+-- Name: TinDaLuu; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE "TinDaLuu" (
+);
+
+
+ALTER TABLE "TinDaLuu" OWNER TO postgres;
+
+--
+-- TOC entry 183 (class 1259 OID 16484)
+-- Name: TinDaXem; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE "TinDaXem" (
+);
+
+
+ALTER TABLE "TinDaXem" OWNER TO postgres;
+
+--
+-- TOC entry 184 (class 1259 OID 16487)
+-- Name: TinDaXoa; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE "TinDaXoa" (
+);
+
+
+ALTER TABLE "TinDaXoa" OWNER TO postgres;
+
+--
+-- TOC entry 185 (class 1259 OID 16490)
+-- Name: TinTuc; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE "TinTuc" (
+    "IDDanhMucSite" integer NOT NULL,
+    "TieuDe" character varying(256),
+    "MoTa" text,
+    "NoiDung" text,
+    "URLNews" text,
+    "URLThumbImage" character varying(256),
+    "URLImage" character varying(256),
+    "ArrayDaXem" bigint[],
+    "ArrayDaXoa" bigint[],
+    "ArrayQuanTam" bigint[],
+    "IDTinTuc" integer NOT NULL,
+    "ThoiGianDangTin" timestamp without time zone
+);
+
+
+ALTER TABLE "TinTuc" OWNER TO postgres;
+
+--
+-- TOC entry 192 (class 1259 OID 16561)
+-- Name: TinTuc_IDTinTuc_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE "TinTuc_IDTinTuc_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE "TinTuc_IDTinTuc_seq" OWNER TO postgres;
+
+--
+-- TOC entry 2186 (class 0 OID 0)
+-- Dependencies: 192
+-- Name: TinTuc_IDTinTuc_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE "TinTuc_IDTinTuc_seq" OWNED BY "TinTuc"."IDTinTuc";
+
+
+--
+-- TOC entry 186 (class 1259 OID 16496)
+-- Name: User; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE "User" (
+    "IDUser" bigint NOT NULL,
+    "TaiKhoan" character varying,
+    "Facebook" character varying(256),
+    "PhoneNumber" character varying(256),
+    "Email" character varying(256),
+    "Password" character varying(1000),
+    "Device" character varying(256),
+    "Token" character varying(256),
+    "NgayTao" timestamp with time zone,
+    "Contact_Tag" character varying(256),
+    "HoTen" character varying(256)
+);
+
+
+ALTER TABLE "User" OWNER TO postgres;
+
+--
+-- TOC entry 187 (class 1259 OID 16502)
+-- Name: User_DanhMucSite; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE "User_DanhMucSite" (
+    "IDUser" bigint NOT NULL,
+    "IDDanhMucSite" integer NOT NULL,
+    "CreatedDate" timestamp without time zone
+);
+
+
+ALTER TABLE "User_DanhMucSite" OWNER TO postgres;
+
+--
+-- TOC entry 188 (class 1259 OID 16505)
+-- Name: danhmuc; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE danhmuc (
+    id integer NOT NULL,
+    name text,
+    icon text,
+    show boolean
+);
+
+
+ALTER TABLE danhmuc OWNER TO postgres;
+
+--
+-- TOC entry 189 (class 1259 OID 16511)
+-- Name: danhmuc_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE danhmuc_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE danhmuc_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2187 (class 0 OID 0)
+-- Dependencies: 189
+-- Name: danhmuc_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE danhmuc_id_seq OWNED BY danhmuc.id;
+
+
+--
+-- TOC entry 190 (class 1259 OID 16513)
+-- Name: news; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE news (
+    id integer NOT NULL,
+    name text NOT NULL,
+    description text NOT NULL,
+    content text NOT NULL,
+    datepub date,
+    imgurl text
+);
+
+
+ALTER TABLE news OWNER TO postgres;
+
+--
+-- TOC entry 191 (class 1259 OID 16519)
+-- Name: news_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE news_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE news_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2188 (class 0 OID 0)
+-- Dependencies: 191
+-- Name: news_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE news_id_seq OWNED BY news.id;
+
+
+--
+-- TOC entry 2033 (class 2604 OID 16656)
+-- Name: IDDanhMucSite; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "DanhMucSite" ALTER COLUMN "IDDanhMucSite" SET DEFAULT nextval('"DanhMucSite_IDDanhMucSite_seq"'::regclass);
+
+
+--
+-- TOC entry 2030 (class 2604 OID 16563)
+-- Name: IDTinTuc; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "TinTuc" ALTER COLUMN "IDTinTuc" SET DEFAULT nextval('"TinTuc_IDTinTuc_seq"'::regclass);
+
+
+--
+-- TOC entry 2031 (class 2604 OID 16521)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY danhmuc ALTER COLUMN id SET DEFAULT nextval('danhmuc_id_seq'::regclass);
+
+
+--
+-- TOC entry 2032 (class 2604 OID 16522)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY news ALTER COLUMN id SET DEFAULT nextval('news_id_seq'::regclass);
+
+
+--
+-- TOC entry 2174 (class 0 OID 16653)
+-- Dependencies: 194
+-- Data for Name: DanhMucSite; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (16, 'http://thanhnien.vn/thoi-su/', 'thời sự', 'thời sự báo thanh niên', NULL, 'header > h2 > a', 'div.summary', NULL, 'figure > a > img', NULL, 'thoi su', NULL, 2, 'header > h2 > a', 'header > div.comment > time', NULL, 'section.cate-list > article.list-article');
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (11, 'http://tuoitre.vn/', 'Tuổi trẻ', NULL, NULL, NULL, NULL, NULL, NULL, 'http://tuoitre.vn/rss/tt-tin-moi-nhat.rss', 'tuoi tre', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTD4AtmT49clIi4nlM7qvbms4Kku78W6SAZXe6mgdCgsrB0Ybk1', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (3, 'http://vietnamnet.vn/', 'VietNamNet', 'Báo điện tử chính thống hàng đầu V', NULL, NULL, NULL, NULL, NULL, 'http://vietnamnet.vn/rss/home.rss', 'viet nam net', 'http://m.img.brothersoft.com/iphone/815/529706815_icon175x175.jpg', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (4, 'http://vietbao.vn/', 'Việt Báo', NULL, NULL, NULL, NULL, NULL, NULL, 'http://vietbao.vn/rss2/tinmoi.rss', 'viet bao', 'http://a3.mzstatic.com/us/r30/Purple62/v4/1f/95/9f/1f959fd3-93fd-f846-e04f-7977ad59cbe6/icon175x175.png', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (5, 'http://dantri.com.vn/', 'Dân Trí', 'Diễn đàn dân trí V', NULL, NULL, NULL, NULL, NULL, 'http://dantri.com.vn/trangchu.rss', 'dan tri', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtiNuhSMj_3yNiCOX2c92CCvxjo1iwcyzf6mue4K66N5fmz_7ZFVAar-I', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (6, 'http://www.vtc.vn/', 'VTC News', 'Hơi thở cuộc sống', NULL, NULL, NULL, NULL, NULL, 'http://www.vtc.vn/home.rss', 'vtc news', 'http://m.img.brothersoft.com/iphone/642/512100642_icon175x175.jpg', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (7, 'http://tintuconline.com.vn/', 'Tin Tức Online', NULL, NULL, NULL, NULL, NULL, NULL, 'http://tintuconline.com.vn/rss/home.rss', 'tin tuc online', 'http://cdn.marketplaceimages.windowsphone.com/v8/images/7cc745ce-f0fb-4a90-8411-55300062f7ef?imageType=ws_icon_medium', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (8, 'http://giaoduc.net.vn/', 'Giáo Dục', 'Báo điện tử giáo dục V', NULL, NULL, NULL, NULL, NULL, 'http://giaoduc.net.vn/RSS/Feed.aspx', 'giao duc', 'https://scontent.fsgn2-1.fna.fbcdn.net/v/t1.0-9/15036310_1122442924478209_8366031459029661101_n.jpg?oh=a3c3336ec84b8e82a5bee6ffe8b86649&oe=58D086F4', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (9, 'http://danviet.vn/', 'Dân Việt', 'Sát cánh cùng nông dân V', NULL, NULL, NULL, NULL, NULL, 'http://danviet.vn/rss/tin-tuc-1001.rss', 'dan viet', 'http://media.tinmoi.vn/2012/08/20/21_35_1345461134_35_Dan%20Viet%20logo%20vuong.jpg', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (10, 'http://www.phunutoday.vn/', 'Phụ Nữ Today', NULL, NULL, NULL, NULL, NULL, NULL, 'http://www.phunutoday.vn/home.rss', 'phu nu today', 'https://scontent.fsgn2-1.fna.fbcdn.net/v/t1.0-9/64655_311183258945069_1449873754_n.jpg?oh=273735aa4c99d6e836e1dc9a981866fe&oe=58B4D39A', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (12, 'http://www.doisongphapluat.com/', 'Đời sống pháp luật', NULL, NULL, NULL, NULL, NULL, NULL, 'http://www.doisongphapluat.com/trang-chu.rss', 'doi song phap luat', 'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQowZOb4kgGxMkpaarglXAwWi8AoAqOf8Zq_vYz77sfkatqhXHN', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (13, 'http://www.nguoiduatin.vn/', 'Người đưa tin', 'Cơ quan của hội luật gia VN', NULL, NULL, NULL, NULL, NULL, 'http://www.nguoiduatin.vn/trang-chu.rss', 'nguoi dua tin', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQK6O6US1HC0l64FRY7gNLQCFXpZGxgAs6pqFmsVZ_Rhx7BRKY6NA', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (14, 'https://guu.vn/', 'Guu.vn', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'guu', 'https://pbs.twimg.com/profile_images/2368601636/1mwwl57970nts2g4smud.png', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (2, 'http://thanhnien.vn/', 'Thanh Niên', 'Diễn đàn thanh niên V', 30, NULL, NULL, NULL, NULL, 'http://thanhnien.vn/rss/home.rss', 'thanh nien', 'http://allaboutwindowsphone.com/images/appicons/235653.png', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (1, 'http://vnexpress.net/', 'VNExpress', 'Báo tiếng Việt nhiều người xem nhất', 30, NULL, NULL, NULL, NULL, 'http://vnexpress.net/rss/tin-moi-nhat.rss', 'vnexpress', 'http://a1039.phobos.apple.com/us/r30/Purple6/v4/2f/89/80/2f89804b-c1d2-5523-4047-77bd551ec935/mzl.ohstmqgv.png', -1, NULL, NULL, NULL, NULL);
+INSERT INTO "DanhMucSite" ("IDDanhMucSite", "DuongDan", "TenGoi", "MoTa", "SoLuongTinDuyetTim", "TempateCrawlTieuDe", "TempateCrawlMoTa", "TempateCrawlNoiDung", "TempateCrawlImage", "LinkRSS", "TenGoi_KoDau", "Icon", "ParentID", "TemplateCrawUrl", "TemplateCrawlNgayDang", "TanSuatDangTin", "TemplateCrawlContext") VALUES (15, 'http://vnexpress.net/tin-tuc/thoi-su', 'thời sự', 'VNExpress thời sự', NULL, 'div > h3 > a', 'div > div.news_lead', NULL, 'div > div.thumb > a > img', NULL, 'thoi su', NULL, 1, 'div > h3 > a', 'div.block_timer_share > div.block_timer.left.txt_666', NULL, 'ul.list_news > li');
+
+
+--
+-- TOC entry 2189 (class 0 OID 0)
+-- Dependencies: 193
+-- Name: DanhMucSite_IDDanhMucSite_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"DanhMucSite_IDDanhMucSite_seq"', 16, true);
+
+
+--
+-- TOC entry 2162 (class 0 OID 16481)
+-- Dependencies: 182
+-- Data for Name: TinDaLuu; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2163 (class 0 OID 16484)
+-- Dependencies: 183
+-- Data for Name: TinDaXem; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2164 (class 0 OID 16487)
+-- Dependencies: 184
+-- Data for Name: TinDaXoa; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2165 (class 0 OID 16490)
+-- Dependencies: 185
+-- Data for Name: TinTuc; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Ga Cái Lân đón lô hàng duy nhất rồi bỏ không', 'Bắt đầu hoạt động năm 2014, ga Cái Lân khai thác được lô hàng duy nhất 10.000 tấn thép từ Thái Nguyên về, rồi đến nay chưa đón thêm chuyến hàng nào khác.', NULL, 'http://vnexpress.net/photo/thoi-su/ga-cai-lan-don-lo-hang-duy-nhat-roi-bo-khong-3510730.html', NULL, 'vnexpress_net/anh-2-1481192870_180x108.jpg', NULL, NULL, NULL, 1, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Chợ sâu bọ dành cho đàn ông nuôi chim ở Sài Gòn', 'Khu chợ tồn tại hơn 20 năm ở đầu đường Thuận Kiều (TP HCM), bán đủ loại sâu, dế, cào cào… cho những người đàn ông nuôi chim, cá cảnh.', NULL, 'http://vnexpress.net/photo/thoi-su/cho-sau-bo-danh-cho-dan-ong-nuoi-chim-o-sai-gon-3510847.html', NULL, 'vnexpress_net/cho-chim_180x108.jpg', NULL, NULL, NULL, 2, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Nghệ An buộc tháo dỡ 17 cần trục xây dựng tiềm ẩn tai nạn', 'Chính quyền thành phố Vinh (Nghệ An) đã trình lên UBND tỉnh danh sách 17 công trình bị đình chỉ thi công do có cần trục tháp tiềm ẩn tai nạn.', NULL, 'http://vnexpress.net/tin-tuc/thoi-su/nghe-an-buoc-thao-do-17-can-truc-xay-dung-tiem-an-tai-nan-3510773.html', NULL, 'vnexpress_net/IMG1382JPG-1481206392_180x108.jpg', NULL, NULL, NULL, 3, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Cháy tại toà nhà Union Square trên phố đi bộ Nguyễn Huệ', '3h sáng nay, lửa bùng lên tại tầng 7 toà nhà Union Square trên phố đi bộ Nguyễn Huệ, quận 1, TP HCM.', NULL, 'http://vnexpress.net/tin-tuc/thoi-su/chay-tai-toa-nha-union-square-tren-pho-di-bo-nguyen-hue-3510797.html', NULL, 'vnexpress_net/chaytoanha-1481240017_180x108.jpg', NULL, NULL, NULL, 4, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Trầm mình dưới ruộng đặt lợp bắt tép ở Đồng Tháp Mười', 'Năm nay lũ lớn, người dân ở Long An lội ruộng đặt lợp bắt gần 10 kg tép, kiếm 400.000-500.000 đồng mỗi ngày.', NULL, 'http://video.vnexpress.net/tin-tuc/xa-hoi/tram-minh-duoi-ruong-dat-lop-bat-tep-o-dong-thap-muoi-3510595.html', NULL, 'vnexpress_net/tep1-1481185543_180x108.jpg', NULL, NULL, NULL, 5, NULL);
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Vì sao đợt mưa lũ này lại có nhiều người chết', 'Dù nước lũ đang chảy dữ dội nhưng người người vẫn bước qua. Đợt lũ năm nay có nhiều bất thường so với mọi năm.', NULL, 'http://video.vnexpress.net/tin-tuc/xa-hoi/vi-sao-dot-mua-lu-nay-lai-co-nhieu-nguoi-chet-3511018.html', NULL, 'vnexpress_net/tinhhoanet9yAOtZ20151106mualumientrunglam7nguoichetvamattich-1481257539_180x108.jpg', NULL, NULL, NULL, 6, NULL);
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Cảnh sát mở đợt cao điểm xử lý vi phạm nồng độ cồn', 'Cục Cảnh sát giao thông chỉ đạo lực lượng chức năng các tỉnh tập trung xử lý nghiêm những vi phạm về nồng độ cồn; chạy quá tốc độ...', NULL, 'http://vnexpress.net/tin-tuc/thoi-su/giao-thong/canh-sat-mo-do-t-cao-die-m-xu-ly-vi-pha-m-no-ng-do-co-n-3510921.html', NULL, 'vnexpress_net/ndc-5315-1481253059_180x108.jpg', NULL, NULL, NULL, 7, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Hải Phòng di dời 3.000 người dân khỏi các chung cư xuống cấp', 'Lãnh đạo thành phố Hải Phòng đặt mục tiêu xây dựng lại 100% chung cư cũ xuống cấp trước năm 2020.', NULL, 'http://vnexpress.net/tin-tuc/thoi-su/hai-phong-di-doi-3-000-nguoi-dan-khoi-cac-chung-cu-xuong-cap-3510777.html', NULL, 'vnexpress_net/images1043244MG8961-1481206934_180x108.jpg', NULL, NULL, NULL, 8, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Kiểm lâm Nghệ An kiểm tra vụ ''đàn trâu kéo gỗ lậu''', 'Nhận phản ánh việc người dân dùng trâu kéo gỗ bất hợp pháp từ rừng về bản, Kiểm lâm Nghệ An vào cuộc yêu cầu thuộc cấp báo cáo.', NULL, 'http://vnexpress.net/tin-tuc/thoi-su/kiem-lam-nghe-an-kiem-tra-vu-dan-trau-keo-go-lau-3510738.html', NULL, 'vnexpress_net/keogo-1481198684_180x108.jpg', NULL, NULL, NULL, 9, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Hà Nội gắn tên phố kỷ niệm 70 năm toàn quốc kháng chiến', 'Con phố cạnh TAND TP Hà Nội mà nhân dân quen gọi là chợ Âm Phủ được gắn biển Phố 19 tháng 12.', NULL, 'http://vnexpress.net/tin-tuc/thoi-su/ha-noi-gan-ten-pho-ky-niem-70-nam-toan-quoc-khang-chien-3510787.html', NULL, 'vnexpress_net/pho19122-1481245594-6650-1481245758_180x108.jpg', NULL, NULL, NULL, 10, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Nông dân Đồng Nai giúp TP HCM truy xuất thịt heo qua điện thoại', '15 máy quét mã vạch cùng hàng chục trang trại, hộ chăn nuôi sạch được đưa vào triển khai nhận diện nguồn gốc thịt heo qua điện thoại thông minh của người tiêu dùng TP HCM.', NULL, 'http://vnexpress.net/tin-tuc/thoi-su/nong-dan-dong-nai-giup-tp-hcm-truy-xuat-thit-heo-qua-dien-thoai-3510534.html', NULL, 'vnexpress_net/nhandien59641479452179-1481175824_180x108.jpg', NULL, NULL, NULL, 11, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Thẻ E-tag thu phí không dừng sẽ được áp dụng cho mọi tuyến đường', 'Bộ trưởng Giao thông Vận tải Trương Quang Nghĩa yêu cầu các chủ đầu tư BOT phải lắp đặt làn thu phí không dừng theo đúng lộ trình để có thể thống nhất thu phí không dừng trên một loại thẻ E-tag trên mọi tuyến đường.', NULL, 'http://vnexpress.net/tin-tuc/thoi-su/giao-thong/the-e-tag-thu-phi-khong-dung-se-duoc-ap-dung-cho-moi-tuyen-duong-3510772.html', NULL, 'vnexpress_net/thuphi6191146847339748511480671419-1481204310_180x108.jpg', NULL, NULL, NULL, 12, '2016-07-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Bê con 7 chân, hai bộ phận sinh dục ở Lâm Đồng', 'Việc bò mẹ sinh bê con có tới 7 chân, hai bộ phận sinh dục đực và cái đã thu hút nhiều người hiếu kỳ đến xem.', NULL, 'http://vnexpress.net/tin-tuc/thoi-su/be-con-7-chan-hai-bo-phan-sinh-duc-o-lam-dong-3510771.html', NULL, 'vnexpress_net/bo-7-chan-9724-1481204603_180x108.jpg', NULL, NULL, NULL, 13, '2016-07-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Ông Nguyễn Thành Phong nhận trách nhiệm về những yếu kém của TP HCM', 'Là người đứng đầu chính quyền TP HCM, ông Nguyễn Thành Phong xin chịu trách nhiệm về những hạn chế, yếu kém trong công tác chỉ đạo điều hành và hứa cố gắng khắc phục trong thời gian tới.', NULL, 'http://vnexpress.net/tin-tuc/thoi-su/ong-nguyen-thanh-phong-nhan-trach-nhiem-ve-nhung-yeu-kem-cua-tp-hcm-3510755.html', NULL, 'vnexpress_net/tphong62321481196257-1481199221_180x108.jpeg', NULL, NULL, NULL, 14, '2016-07-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Người ''hôi'' thịt trâu chết giữa đường thấy hối hận', 'Bị cảnh sát mời lên làm việc, những người tham gia xẻ thịt trâu chết giữa đường cho biết, họ rất xấu hổ và hối hận khi có hành động như thế.', NULL, 'http://vnexpress.net/tin-tuc/thoi-su/nguoi-hoi-thit-trau-chet-giua-duong-thay-hoi-han-3510746.html', NULL, 'vnexpress_net/hoithittrau59611481013014-1481194911_180x108.jpg', NULL, NULL, NULL, 15, '2016-07-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Ba cán bộ bị kỷ luật vì liên quan vụ Trịnh Xuân Thanh', 'Ông Trần Lưu Hải, nguyên Phó trưởng ban thường trực Ban tổ chức Trung ương và ông Huỳnh Minh Chắc, nguyên Bí thư Tỉnh ủy Hậu Giang bị kỷ luật cảnh cáo; ông Nguyễn Duy Thăng, Thứ trưởng Nội vụ bị khiển trách.', NULL, 'http://vnexpress.net/tin-tuc/thoi-su/ba-can-bo-bi-ky-luat-vi-lien-quan-vu-trinh-xuan-thanh-3510754.html', NULL, 'vnexpress_net/top-1481197186_180x108.jpg', NULL, NULL, NULL, 16, '2016-07-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, 'Dàn cảnh trộm 1,7 tỉ đồng trên ô tô', 'Ngày 8.12, Công an Q.Bình Thạnh (TP.HCM) truy xét băng nhóm dàn cảnh trộm 1,7 tỉ đồng của chị P.T.T.H (36 tuổi, ngụ Q.Gò Vấp).', NULL, 'http://thanhnien.vn/thoi-su/dan-canh-trom-17-ti-dong-tren-o-to-772594.html', NULL, 'thanhnien_vn/trom_nwez_XSEJ.jpg', NULL, NULL, NULL, 34, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Đà Nẵng tính siết nhập cư và cấm xây nhà cao tầng ở trung tâm', 'Lo ngại quá nhiều căn hộ chung cư cao tầng được xây dựng ở khu vực trung tâm, làm gia tăng lượng phương tiện dẫn đến kẹt xe nghiêm trọng, Chủ tịch UBND TP Đà Nẵng đề nghị siết chặt lại vấn đề nhà ở và nhập cư.', NULL, 'http://vnexpress.net/tin-tuc/thoi-su/da-nang-tinh-siet-nhap-cu-va-cam-xay-nha-cao-tang-o-trung-tam-3510648.html', NULL, 'vnexpress_net/ket-xe-2080-1481188282_180x108.jpg', NULL, NULL, NULL, 17, '2016-07-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Hai nam sinh Bình Định tử vong vì bị lũ cuốn', 'Trên đường trở về nhà sau giờ học, hai nam sinh lớp 8 ở Bình Định bị lũ cuốn trôi khi đi qua đập tràn lúc dòng nước chảy xiết, thi thể được tìm thấy cách đấy 500 m.', NULL, 'http://vnexpress.net/tin-tuc/giao-duc/hai-nam-sinh-binh-dinh-tu-vong-vi-bi-lu-cuon-3510579.html', NULL, 'vnexpress_net/vnehainamsinhduoinnuoc-1481186437_180x108.jpg', NULL, NULL, NULL, 18, '2016-07-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Công bố hình ảnh nhận diện nghi can cướp ngân hàng ở Huế', 'Hình ảnh tên cướp đội mũ, đeo khẩu trang do camera quay ở cự ly gần vừa được nhà chức trách công bố để người dân nhận diện, hỗ trợ truy tìm.', NULL, 'http://vnexpress.net/tin-tuc/phap-luat/cong-bo-hinh-anh-nhan-dien-nghi-can-cuop-ngan-hang-o-hue-3510555.html', NULL, 'vnexpress_net/kecuopnganhang-1481185341_180x108.jpg', NULL, NULL, NULL, 19, '2016-07-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Cục chống tham nhũng: Cần xác minh tài sản cán bộ trước khi bổ nhiệm', '10 năm qua thiệt hại do các vụ án, vụ việc tham nhũng được phát hiện gần 60.000 tỉ đồng, cơ quan chức năng thu hồi gần 10%.', NULL, 'http://vnexpress.net/tin-tuc/thoi-su/cuc-chong-tham-nhung-can-xac-minh-tai-san-can-bo-truoc-khi-bo-nhiem-3510537.html', NULL, 'vnexpress_net/onghung87881481182312-1481183011_180x108.jpg', NULL, NULL, NULL, 20, '2016-07-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Trụ điện cháy như đuốc ở TP HCM, nhiều người bỏ chạy', 'Những bó cáp viễn thông to lớn trên cột điện ở quận Tân Bình bất ngờ bốc cháy dữ dội kèm nhiều tiếng nổ lớn khiến người dân hoảng loạn.', NULL, 'http://vnexpress.net/tin-tuc/thoi-su/tru-dien-chay-nhu-duoc-o-tp-hcm-nhieu-nguoi-bo-chay-3510526.html', NULL, 'vnexpress_net/chay-tru-dien-7606-1481176592_180x108.jpg', NULL, NULL, NULL, 21, '2016-07-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, '50 giáo viên dạy lái ôtô sử dụng bằng giả', 'Bị phát hiện sử dụng bằng giả để làm hồ sơ dạy lái ôtô, 50 giáo viên các trường ở Đăk Lăk bị thu hồi chứng chỉ.', NULL, 'http://vnexpress.net/tin-tuc/thoi-su/50-giao-vien-day-lai-oto-su-dung-bang-gia-3510513.html', NULL, 'vnexpress_net/banggia-1481173451_180x108.jpg', NULL, NULL, NULL, 22, '2016-07-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Đại biểu TP HCM: Xây cao ốc tràn lan làm kẹt xe nghiêm trọng', 'Theo bà Tô Thị Bích Châu, tình trạng kẹt xe ở Sài Gòn đang trở thành vấn nạn, trong đó có nguyên nhân các cao ốc được xây dựng rất gần nhau.', NULL, 'http://vnexpress.net/tin-tuc/thoi-su/dai-bieu-tp-hcm-xay-cao-oc-tran-lan-lam-ket-xe-nghiem-trong-3510454.html', NULL, 'vnexpress_net/db-to-thi-bich-chau-1842-1481169819_180x108.jpg', NULL, NULL, NULL, 23, '2016-07-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Bé trai 10 tuổi tử vong trong căn nhà 2 tầng bốc cháy', 'Đám cháy phát ra từ căn nhà 2 tầng ở quận 4 (TP HCM) lúc rạng sáng khiến người cha bỏng nặng, con trai tử vong.', NULL, 'http://vnexpress.net/tin-tuc/thoi-su/be-trai-10-tuoi-tu-vong-trong-can-nha-2-tang-boc-chay-3510461.html', NULL, 'vnexpress_net/chay-nha-7691-1481169877_180x108.jpg', NULL, NULL, NULL, 24, '2016-07-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (15, 'Gia đình 5 người sống trong căn nhà 3 m2 ở Sài Gòn', 'Nằm dưới chân cầu Chánh Hưng (quận 8) là ngôi nhà 3 m2 của vợ chồng anh Vũ thuê ở cùng 3 người con.', NULL, 'http://vnexpress.net/photo/thoi-su/gia-dinh-5-nguoi-song-trong-can-nha-3-m2-o-sai-gon-3509738.html', NULL, 'vnexpress_net/2-1481074710_180x108.jpg', NULL, NULL, NULL, 25, '2016-07-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, 'Không cần học nghiệp vụ,  vẫn được làm ''vệ sĩ''', 'Không phủ nhận nhiều công ty dịch vụ bảo vệ đang góp phần vào việc\r\ngiữ gìn trật tự xã hội chung, nhưng cũng có không ít công ty khiến người\r\ndân lo ngại do công tác quản lý, đào tạo không tốt.', NULL, 'http://thanhnien.vn/thoi-su/khong-can-hoc-nghiep-vu-van-duoc-lam-ve-si-772572.html', NULL, 'thanhnien_vn/untitled-1_XOII.jpg', NULL, NULL, NULL, 26, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, 'Dự án ''treo'', quy hoạch ''treo'' khắp nơi là lỗi của cả hệ thống', 'Đó là một phần nội dung trả lời của Giám đốc Sở Xây dựng tỉnh Đồng Nai Tạ Huy Hoàng với phần chất vấn về việc tồn tại nhiều dự án quy hoạch ''treo'', nhiều dự án kéo dài, chậm bồi thường, tái định cư.', NULL, 'http://thanhnien.vn/thoi-su/du-an-treo-quy-hoach-treo-khap-noi-la-loi-cua-ca-he-thong-772660.html', NULL, 'thanhnien_vn/quy_hoach_treo_TONJ.jpg', NULL, NULL, NULL, 27, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, 'Cháy ở tòa nhà Union Square ngay trung tâm Sài Gòn lúc rạng sáng', 'Tòa nhà Union Square, nằm ngay trung tâm TP.HCM đang trong quá trình sửa chữa bất ngờ bốc cháy khiến nhiều người dân hoảng hốt.', NULL, 'http://thanhnien.vn/thoi-su/chay-o-toa-nha-union-square-ngay-trung-tam-sai-gon-luc-rang-sang-772654.html', NULL, 'thanhnien_vn/chay1_FUZC.png', NULL, NULL, NULL, 28, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, 'Phạt khách sạn Mường Thanh Buôn Ma Thuột xây dựng không phép', 'Khách sạn Mường Thanh Buôn Ma Thuột bị phạt 40 triệu đồng vì xây dựng không phép. Khách sạn này khởi công từ tháng 2.2016 và đã xây dựng được 10 tầng vào thời điểm bị buộc ngưng thi công.', NULL, 'http://thanhnien.vn/thoi-su/phat-khach-san-muong-thanh-buon-ma-thuot-xay-dung-khong-phep-772588.html', NULL, 'thanhnien_vn/muong_thanh_bmt_UEEB.jpg', NULL, NULL, NULL, 29, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, 'TP.HCM có hơn 500 dự án ''treo'' vì chậm tiến độ', 'Toàn TP.HCM có hơn 500 dự án ''treo'' vì chậm tiến độ, ''quan điểm của UBND TP là không chấp nhận tình trạng này'', Chủ tịch UBND TP Nguyễn Thành Phong nói.', NULL, 'http://thanhnien.vn/thoi-su/tphcm-co-hon-500-du-an-treo-vi-cham-tien-do-772582.html', NULL, 'thanhnien_vn/nguyen_thanh_phong_YCXN.jpg', NULL, NULL, NULL, 30, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, 'Không thể phát triển chỉ dựa vào khai thác tài nguyên', 'Thủ tướng Nguyễn Xuân Phúc nhấn mạnh từng thành viên ASEAN không thể phát triển nếu chỉ dựa vào khai thác tài nguyên và lao động giản đơn...', NULL, 'http://thanhnien.vn/thoi-su/khong-the-phat-trien-chi-dua-vao-khai-thac-tai-nguyen-772592.html', NULL, 'thanhnien_vn/thu_tuong_nguyen_xuan_phuc_QHVF.jpg', NULL, NULL, NULL, 31, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, 'Kiều bào là hạt nhân vun đắp quan hệ Việt - Ấn', 'Chủ tịch Quốc hội Nguyễn Thị Kim Ngân đề nghị bà con kiều bào tiếp tục là những hạt nhân tích cực để vun đắp mối quan hệ hữu nghị và hợp tác giữa VN và Ấn Độ ngày càng phát triển.', NULL, 'http://thanhnien.vn/thoi-su/kieu-bao-la-hat-nhan-vun-dap-quan-he-viet-an-772589.html', NULL, 'thanhnien_vn/chu_tich_quoc_hoi_voi_kieu_bao_vn_tai_an_do_HCBF.jpg', NULL, NULL, NULL, 32, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, 'Cảnh báo ngập do triều cường', 'Đỉnh triều cao nhất trong đợt này xuất hiện vào ngày 14 - 15.12.  Khu vực TP.HCM và TP.Thủ Dầu Một (Bình Dương) có khả năng ngập sâu ở những vùng trũng thấp; TP.Biên Hòa (Đồng Nai) cũng có khả năng ngập.', NULL, 'http://thanhnien.vn/thoi-su/canh-bao-ngap-do-trieu-cuong-772591.html', NULL, 'thanhnien_vn/trieu_cuong_gay_ngap_LKWD.jpg', NULL, NULL, NULL, 33, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, '4 người bệnh nằm chung 1 giường', 'Tại Bệnh viện K (cơ sở 3, Hà Nội), Bộ trưởng Bộ Y tế Nguyễn Thị Kim Tiến chứng kiến cảnh 4 bệnh nhân/giường bệnh do khoa Nội 2 bố trí chung bệnh nhân ngoại trú và nội trú', NULL, 'http://thanhnien.vn/thoi-su/4-nguoi-benh-nam-chung-1-giuong-772580.html', NULL, 'thanhnien_vn/hop_bao_kham_chua_benh_3_EQKU.jpg', NULL, NULL, NULL, 35, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, 'Xây dựng chiếm 1/3 số vụ tai nạn', 'Ngành xây dựng chiếm đến 1/3 số vụ tai nạn lao động và có xu hướng gia tăng.', NULL, 'http://thanhnien.vn/thoi-su/xay-dung-chiem-13-so-vu-tai-nan-772607.html', NULL, 'thanhnien_vn/sap_can_cau_cong_trinh_YSOX.jpg', NULL, NULL, NULL, 36, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, 'Kỷ luật thêm 3 cán bộ cấp cao  liên quan vụ Trịnh Xuân Thanh', 'Ngày 8.12, tại Hà Nội, Ban Bí thư T.Ư Đảng dưới sự chủ trì của Tổng\r\nbí thư Nguyễn Phú Trọng đã họp xem xét thi hành kỷ luật một số cán bộ\r\nliên quan đến vụ Trịnh Xuân Thanh.', NULL, 'http://thanhnien.vn/thoi-su/ky-luat-them-3-can-bo-cap-cao-lien-quan-vu-trinh-xuan-thanh-772581.html', NULL, 'thanhnien_vn/thanh_sbyd-1_IYGB.jpg', NULL, NULL, NULL, 37, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, '''Lô cốt'' tái xuất, kẹt xe gia tăng', 'Cứ tới hẹn lại lên, cuối năm lô cốt xuất hiện khắp các tuyến đường\r\ntại TP.HCM khiến giao thông ùn tắc nghiêm trọng, hàng trăm hộ dân, cơ sở\r\nkinh doanh cũng điêu đứng.', NULL, 'http://thanhnien.vn/thoi-su/lo-cot-tai-xuat-ket-xe-gia-tang-772605.html', NULL, 'thanhnien_vn/6a4_URMJ.jpg', NULL, NULL, NULL, 38, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, 'Bình Thuận đề nghị ngừng triển khai cấp phép ''đổ bùn ra biển''', 'Phó chủ tịch UBND tỉnh Bình Thuận Phạm Văn Nam cho biết, đã có văn bản đề nghị Bộ TNMT ngừng triển khai việc cấp phép cho Nhà máy nhiệt điện Vĩnh Tân 1 đổ bùn ra biển.', NULL, 'http://thanhnien.vn/thoi-su/binh-thuan-de-nghi-ngung-trien-khai-cap-phep-do-bun-ra-bien-772480.html', NULL, 'thanhnien_vn/img_0567_ZQLX.jpg', NULL, NULL, NULL, 39, '2016-07-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, 'Đà Nẵng ''chính thức tuyên chiến với các loại tội phạm''', 'Theo ông Xuân Anh, TP “chính thức tuyên chiến với các loại tội phạm”. Đây là một cuộc chiến khốc liệt, đòi hỏi Công an TP là lực lượng tiên phong.', NULL, 'http://thanhnien.vn/thoi-su/da-nang-chinh-thuc-tuyen-chien-voi-cac-loai-toi-pham-772486.html', NULL, 'thanhnien_vn/1_CLAD.jpg', NULL, NULL, NULL, 40, '2016-07-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, 'Quá tải đăng ký làm hộ chiếu vì hiểu sai thông tin', 'Ngày 8.12, Phòng Quản lý xuất nhập cảnh Công an TP.Đà Nẵng cho hay hiện công tác cấp hộ chiếu đang quá tải bởi người dân hiểu sai thông tin.', NULL, 'http://thanhnien.vn/thoi-su/qua-tai-dang-ky-lam-ho-chieu-vi-hieu-sai-thong-tin-772500.html', NULL, 'thanhnien_vn/image001_CBJQ.jpg', NULL, NULL, NULL, 41, '2016-07-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, 'Triệu tập 4 người tranh nhau xẻ thịt trâu chết vì tai nạn', 'Chiều 8.12, Công an P.Bình Chuẩn (TX.Thuận An, Bình Dương) cho biết đã triệu tập 4 người tham gia xẻ thịt trâu chết vì tai nạn giao thông trên đường Mỹ Phước Tân Vạn.', NULL, 'http://thanhnien.vn/thoi-su/trieu-tap-4-nguoi-tranh-nhau-xe-thit-trau-chet-vi-tai-nan-772482.html', NULL, 'thanhnien_vn/anh1-ct_OFKQ.jpg', NULL, NULL, NULL, 42, '2016-07-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, 'Kỷ luật nguyên Bí thư Tỉnh ủy Hậu Giang liên quan đến Trịnh Xuân Thanh', '100% thành viên Ban bí thư đã thống nhất quyết định kỷ luật hình thức cảnh cáo ông Huỳnh Minh Chắc, nguyên Uỷ viên T.Ư Đảng, nguyên Bí thư Tỉnh uỷ Hậu Giang nhiệm kỳ 2010 - 2015.', NULL, 'http://thanhnien.vn/thoi-su/ky-luat-nguyen-bi-thu-tinh-uy-hau-giang-lien-quan-den-trinh-xuan-thanh-772477.html', NULL, 'thanhnien_vn/thanh_sbyd_rkmq_XSCR.jpg', NULL, NULL, NULL, 43, '2016-07-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, 'Cướp tiền ngân hàng ở Huế: Không có chuyện ''thưởng nóng'' cho người tố giác tội phạm', 'Đại diện lãnh đạo Công an tỉnh Thừa Thiên - Huế phủ nhận việc ''thưởng nóng'' 10 triệu đồng cho người dân cung cấp thông tin về nghi can vụ cướp tiền ngân hàng xảy ra ở TP.Huế hôm 6.12', NULL, 'http://thanhnien.vn/thoi-su/cuop-tien-ngan-hang-o-hue-khong-co-chuyen-thuong-nong-cho-nguoi-to-giac-toi-pham-772464.html', NULL, 'thanhnien_vn/c1_DJKY.jpg', NULL, NULL, NULL, 44, '2016-07-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, '4 ngư dân cùng tàu cá mất tích trên biển', 'Một tàu cá cùng 4 ngư dân hành nghề trên vùng biển Quảng Ngãi bị mất tích. Công tác tìm kiếm đã được triển khai nhưng vẫn chưa có kết quả.', NULL, 'http://thanhnien.vn/thoi-su/4-ngu-dan-cung-tau-ca-mat-tich-tren-bien-772458.html', NULL, 'thanhnien_vn/tauca196_ntu_qqxh_ZWKE.jpg', NULL, NULL, NULL, 45, '2016-07-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, 'Sập tường trong trường mầm non, 1 người chết, 1 người bị thương', 'Khoảng 8 giờ sáng nay (9.12), trong khi phá dỡ một công trình nằm trong khuôn viên Trường mầm non Hoa Mai (phố Hoàng Văn Thái, quận Thanh Xuân, Hà Nội), 2 người đã bị bê tông đổ sập gây thương vong.', NULL, 'http://thanhnien.vn/thoi-su/sap-tuong-trong-truong-mam-non-1-nguoi-chet-1-nguoi-bi-thuong-772688.html', NULL, 'thanhnien_vn/hoa-mai-2_LEUJ.jpg', NULL, NULL, NULL, 92, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, 'Kiểm tra quán bar, phát hiện vũ công ''ăn mặc thiếu vải'' múa khiêu dâm', 'Bất ngờ kiểm tra quán bar lúc rạng sáng, cơ quan chức năng phát hiện tại đây có hai cô gái ăn mặc ''thiếu vải'' đang múa khiêu dâm và 5 người dương tính với ma túy.', NULL, 'http://thanhnien.vn/thoi-su/kiem-tra-quan-bar-phat-hien-vu-cong-an-mac-thieu-vai-mua-khieu-dam-772664.html', NULL, 'thanhnien_vn/vucongbar2_KYBD.jpg', NULL, NULL, NULL, 93, '2016-08-12 00:00:00');
+INSERT INTO "TinTuc" ("IDDanhMucSite", "TieuDe", "MoTa", "NoiDung", "URLNews", "URLThumbImage", "URLImage", "ArrayDaXem", "ArrayDaXoa", "ArrayQuanTam", "IDTinTuc", "ThoiGianDangTin") VALUES (16, '300 kg đầu gà bốc mùi ''lên'' xe khách giường nằm từ Gò Vấp về Phụng Hiệp', 'Tổ tuần tra CSGT, Công an TP.Cần Thơ đã phát hiện và thu giữ gần 300 kg đầu gà đã bốc mùi, biến đổi màu sắc, không rõ nguồn gốc trên một xe khách giường nằm.', NULL, 'http://thanhnien.vn/thoi-su/300-kg-dau-ga-boc-mui-len-xe-khach-giuong-nam-tu-go-vap-ve-phung-hiep-772686.html', NULL, 'thanhnien_vn/kiemtra1_NNTO.jpg', NULL, NULL, NULL, 94, '2016-08-12 00:00:00');
+
+
+--
+-- TOC entry 2190 (class 0 OID 0)
+-- Dependencies: 192
+-- Name: TinTuc_IDTinTuc_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"TinTuc_IDTinTuc_seq"', 110, true);
+
+
+--
+-- TOC entry 2166 (class 0 OID 16496)
+-- Dependencies: 186
+-- Data for Name: User; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO "User" ("IDUser", "TaiKhoan", "Facebook", "PhoneNumber", "Email", "Password", "Device", "Token", "NgayTao", "Contact_Tag", "HoTen") VALUES (1, 'admin', NULL, NULL, NULL, '1234', NULL, NULL, NULL, NULL, NULL);
+
+
+--
+-- TOC entry 2167 (class 0 OID 16502)
+-- Dependencies: 187
+-- Data for Name: User_DanhMucSite; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2168 (class 0 OID 16505)
+-- Dependencies: 188
+-- Data for Name: danhmuc; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO danhmuc (id, name, icon, show) VALUES (14, 'ABC News', 'http://a5.mzstatic.com/us/r30/Purple71/v4/22/9f/23/229f23a9-5988-37aa-3a25-6bb8629cd9df/icon175x175.png', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (1, 'CNN', 'https://cdn2.iconfinder.com/data/icons/metro-uinvert-dock/128/CNN.png', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (11, 'Wall Street Journal', 'https://s1.mzstatic.com/us/r30/Purple69/v4/b5/86/cd/b586cd7e-d971-1b98-c479-2cd5911dd852/icon128x128.jpeg', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (6, 'USA Today', 'http://dl.myket.ir/imageresizing/icon/small/com.usatoday.android.news.png', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (9, 'Times of India', 'http://pbs.twimg.com/profile_images/1282407636/icon_512_reasonably_small.png', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (15, 'AnandTech', 'http://images.anandtech.com/reviews/tablets/apple/ipad3/icon144upscale.png', true);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (18, 'Thanh niên', 'http://allaboutwindowsphone.com/images/appicons/235653.png', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (5, 'Washington Post', 'http://media.148apps.com/icons/243436/243436_180.jpg', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (12, 'MSNBC', 'http://media1.s-nbcnews.com/i/MSNBC/Components/Interactives/_swf/_shared/msnbc-facebooklike-icon.jpg', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (7, 'NBC News', 'http://pbs.twimg.com/profile_images/721554521957138436/tTocueCd_reasonably_small.jpg', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (3, 'New York Times', 'http://findicons.com/files/icons/2796/metro_uinvert_dock/128/the_new_york_times_alt.png', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (10, 'Daily Mail', 'https://dl.myket.ir/newresizing/resize/medium/png/icon/com.dailymail.online.png', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (4, 'Fox News', 'http://cdn-img.easyicon.net/png/10909/1090908.gif', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (16, 'Dân Trí', 'https://chungcucaocap.vn/files/assets/icon175x175.png', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (2, 'BBC News', 'http://www.androiddrawer.com/wp-content/uploads/2014/08/BBC-News-icon-e1415350808419.png', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (8, 'Guardian', 'http://icons.iconarchive.com/icons/martz90/hex/128/guardian-icon.png', false);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (17, 'tuổi trẻ', 'http://phongcongchung4tphcm.vn/content/uploaduser/medium/5341621782_bao_tuoi_tre_online.jpg', true);
+INSERT INTO danhmuc (id, name, icon, show) VALUES (13, 'Los Angeles Times', 'http://www.trikkestl.com/uploads/4/1/5/7/41574071/7866911_orig.gif', false);
+
+
+--
+-- TOC entry 2191 (class 0 OID 0)
+-- Dependencies: 189
+-- Name: danhmuc_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('danhmuc_id_seq', 18, true);
+
+
+--
+-- TOC entry 2170 (class 0 OID 16513)
+-- Dependencies: 190
+-- Data for Name: news; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO news (id, name, description, content, datepub, imgurl) VALUES (2, 'Điều khu trục hạm tới Hoàng Sa, Mỹ "phá vỡ im lặng" sau phán quyết Biển Đông', 'Việc Mỹ điều tàu chiến tiến sát các đảo ở Hoàng Sa bị Trung Quốc chiếm giữ trái phép cho ...', 'Sự xuất hiện tàu tuần tra của Mỹ ở Biển Đông cho thấy Mỹ dùng thời điểm này để thể hiện chính sách của mình về hiện trạng vùng biển ở Biển Đông. Chương trình hoạt động bảo vệ tự do hàng hải (FONOP) vẫn đang tiếp diễn, đặc biệt sau khi Toà trọng tài ra phán quyết. Bởi vì vẫn có một sự im lặng sau ngày 12/7 bất chấp có nhiều trông đợi. Mọi người băn khoăn khi nào có thêm chuyến tuần tra, vì thế tôi nghĩ đây là sự thể hiện của Mỹ rằng họ vẫn thực hiện điều đó, Giáo sư Jay Batongbacal, Giám đốc Viện Nghiên cứu các Vấn đề Hàng hải và Luật Biển Philippines, Đại học Philippines, đánh giá khi trao đổi với VnExpress.Tàu khu trục có tên lửa dẫn đường USS Decatur của hải quân Mỹ hôm qua tiến sát các đảo thuộc quần đảo Hoàng Sa ở Biển Đông. Con tàu đã đến gần hai đảo Tri Tôn và Phú Lâm, thuộc quần đảo Hoàng Sa của Việt Nam mà Trung Quốc đang chiếm đóng trái phép. Tàu này không vào bên trong vùng 12 hải lý quanh các đảo. Ba tàu Trung Quốc đã theo dõi nhưng tất cả tương tác giữa hai bên đều diễn ra an toàn.', '2016-03-24', 'http://img.f30.vnecdn.net/2016/10/22/decatur-1477111938_180x108.jpg');
+INSERT INTO news (id, name, description, content, datepub, imgurl) VALUES (3, 'Sức mạnh tàu chiến Mỹ vừa tuần tra gần Hoàng Sa', 'Khu trục hạm USS Decatur vừa tuần tra gần Hoàng Sa thuộc một trong những lớp tàu ...', 'Đây là lần thứ tư Mỹ điều tàu đến Biển Đông để thách thức tuyên bố chủ quyền của Trung Quốc trong năm qua và là lần đầu tiên kể từ hồi tháng 5. Trong ba lần trước, các tàu chiến Mỹ đều đi vào khu vực 12 hải lý quanh các hòn đảo và khiến Trung Quốc tức giận. Sau khi Toà trọng tài quốc tế ra phán quyết, bác bỏ yêu sách "đường lưỡi bò" của Trung Quốc ở  Biển Đông, giữa tháng 7, nước này tuyên bố không chấp nhận kết luận, bất chấp sự phản đối của các nước láng giềng và cộng đồng quốc tế. Về việc tàu Mỹ không đi vào trong vùng 12 hải lý của các đảo, Tiến sĩ Batongbacal nhận đình chuyến tàu tra bảo vệ tự do hàng hải không nhất thiết lúc nào cũng đi vào phạm vi 12 hải lý của một hòn đảo hay một thực thể. Hoạt động này phụ thuộc vào quyền (của nước thực hiện) và địa điểm. ', '2016-04-22', 'http://img.f30.vnecdn.net/2016/10/22/1-1477113038_180x108.jpg');
+INSERT INTO news (id, name, description, content, datepub, imgurl) VALUES (4, 'Nhiều tay súng đội mũ trùm đầu đe dọa quốc hội Venezuela', 'Khoảng 7 đến 8 tay súng đã cố gắng đột nhập văn phòng ủy ban kiểm soát tài chính của ...', 'Với cuộc tuần tra ở Hoàng Sa lần này, tất cả các đảo và vùng biển giữa chúng đều bị Trung Quốc bao vây trên các ranh giới như là một thực thể đơn. Trung Quốc cho rằng các đảo trong quần đảo Hoàng Sa nằm trong vùng nội thủy của họ, nơi được hưởng quy chế như như vùng lãnh thổ trên đất liền theo Công ước Liên Hợp Quốc về Luật biển (UNCLOS) năm 1982. Vì thế chuyến tuần tra của Mỹ được thiết kế để khẳng định không có vùng nội thủy nào ngoài vùng biển quốc tế ở đây. Họ không cần đi vào vùng 12 hải lý của bất cứ đảo nào ở Hoàng Sa. Mỹ đang cho thấy vùng biển giữa các đảo (và vùng xung quanh 12 hải lý của mỗi đảo) là vùng biển quốc tế.', '2016-09-03', 'http://img.f29.vnecdn.net/2016/10/22/venezuela-1477117126_180x108.jpg');
+INSERT INTO news (id, name, description, content, datepub, imgurl) VALUES (8, 'Trực thăng Mi-8 rơi ở Nga, 19 người tử nạn', 'Sáng 22-10, một trực thăng Mi-8 rơi xuống bán đảo Yamal, Siberia (Nga) giữa thời tiết xấu khiến 19 người thiệt mạng...', 'Clinton chế nhạo Trump. Sau khi ông Trump tuyên bố Tổng thống Nga Vladimir Putin "không dành bất kỳ sự tôn trọng nào" cho Clinton, bà đã khéo léo lợi dụng câu chữ của đối thủ để phản pháo: "Ông ta muốn một con rối làm tổng thống Mỹ hơn". Vứt bỏ kịch bản, bà Clinton đã tự biến mình thành một "kẻ uy hiếp", liên tục dùng chính những chiến thuật đã trở thành đặc trưng của Donald Trump để chống lại ông, New York Times bình luận.', '2016-04-22', 'http://static.new.tuoitre.vn/tto/i/s146/2016/10/22/truc-thang-1477108571.jpg');
+INSERT INTO news (id, name, description, content, datepub, imgurl) VALUES (9, 'Nhiều tay súng đội mũ trùm đầu đe dọa quốc hội Venezuela', 'Khoảng 7 đến 8 tay súng đã cố gắng đột nhập văn phòng ủy ban kiểm soát tài chính của ...', 'Trong khi đó, ứng viên chạy đua vào Nhà Trắng đảng Cộng hòa, trên sân khấu tranh luận tại Đại học Nevada, Las Vegas, cho thấy một hình ảnh rất khác so với những gì ông thể hiện suốt 16 tháng qua: bình tĩnh và kiềm chế một cách kỳ lạ. Người xem hãn hữu mới thấy ông lăng mạ hay ngắt lời đối phương.Trong phần tranh luận với chủ đề nhập cư, bà Clinton tung ra một cú đòn hiểm, quả quyết rằng ông Trump đã lợi dụng người lao động không có giấy tờ để xây tòa nhà Trump Tower, thậm chí đe dọa trục xuất những người này.', '2016-10-11', 'http://static.new.tuoitre.vn/tto/i/s146/2016/10/23/iraq-1477179909.jpg');
+INSERT INTO news (id, name, description, content, datepub, imgurl) VALUES (26, 'Quan hệ Việt - Mỹ ra sao khi Mỹ có tổng thống mới?', 'Nếu bà Hillary Clinton đắc cử Tổng thống thì việc xoay trục sang châu Á-Thái Bình Dương sẽ tiếp tục được thúc đẩy mạnh mẽ.', 'Đây là nhận định của Phó Giáo sư, Tiến sĩ Cù Chí Lợi, Viện trưởng Viện Nghiên cứu châu Mỹ thuộc Viện Hàn lâm Khoa học Xã hội Việt Nam trong cuộc trao đổi với phóng viên Dân trí xung quanh các vấn đề liên quan tới cuộc bầu cử tổng thống Mỹ ngày 8/11.
+            Bà Clinton sẽ "rắn" với Trung Quốc về Biển Đông
+
+Hiện cuộc bầu cử Tổng thống Mỹ đã bước vào giai đoạn cuối cùng. Về cơ bản, bà Clinton đang có nhiều cơ hội giành chiến thắng hơn. Nhiều người cho rằng khu vực châu Á-Thái Bình Dương sẽ được chú ý hơn nếu bà Clinton thắng cử. Vậy ý kiến của ông ra sao?
+
+Bà Hillary Clinton và Tổng thống Barack Obama chính là tác giả của chiến lược xoay trục của Mỹ sang châu Á-Thái Bình Dương. Bà cũng có một quá trình sát cánh với Tổng thống Obama trong chính sách đối ngoại khi còn làm ngoại trưởng Mỹ. Vì thế, quan điểm của bà ấy với chiến lược này là rất rõ ràng. Nếu bà Clinton đắc cử Tổng thống thì việc xoay trục sẽ được tiếp tục thực hiện, thậm chí sẽ được đẩy mạnh hơn so với thời ông Obama.', '2016-11-08', 'https://dantri4.vcmedia.vn/b1f4d804b1/2016/11/07/hil-1477648200159-png-1478513405759.jpg');
+INSERT INTO news (id, name, description, content, datepub, imgurl) VALUES (27, 'Bà Michelle Obama lần đầu tiếp phu nhân Tổng thống đắc cử Trump', 'Đệ nhất phu nhân Michelle Obama hôm qua 10/11 đã tiếp phu nhân của Tổng thống đắc cử Donald Trump tại Nhà Trắng', 'NBC dẫn lời người phát ngôn Nhà Trắng Josh Earnest cho biết đây là cuộc gặp đầu tiên giữa hai phu nhân của tổng thống đương nhiệm và tổng thống đắc cử, diễn ra tại nơi ở riêng của bà Michelle Obama ở Nhà Trắng. Theo ông Earnest, bà Michelle Obama và bà Melania Trump đã uống trà cùng nhau trong lúc trao đổi về kinh nghiệm nuôi dạy con cái cũng như làm cha mẹ tốt tại Nhà Trắng.
+
+Bà Obama sau đó đã dẫn đệ nhất phu nhân tương lai đi thăm quan một vòng quanh nơi ở của bà tại Nhà Trắng cùng người quản gia Bill Allman. Sau đó, hai người cùng đến Phòng Bầu Dục để gặp Tổng thống Barack Obama và Tổng thống đắc cử Donald Trump. Đây cũng là lần đầu tiên ông Obama và ông Trump gặp nhau tại Nhà Trắng và cuộc nói chuyện giữa hai bên đã kéo dài tới 90 phút. Cả tổng thống đương nhiệm và tổng thống mới đắc cử đều bày tỏ sự vui vẻ trong cuộc gặp và khẳng định sẵn sàng chuẩn bị cho quá trình chuyển giao quyền lực trong thời gian tới.', '2016-11-11', 'https://dantri4.vcmedia.vn/thumb_w/640/756edd3768/2016/11/11/161110-first-ladies-mbe-508p-ff2f4b9244dc95a04246c19551d7b99b-nbcnews-fp-1200-800-1478827789836.jpg');
+
+
+--
+-- TOC entry 2192 (class 0 OID 0)
+-- Dependencies: 191
+-- Name: news_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('news_id_seq', 28, true);
+
+
+--
+-- TOC entry 2045 (class 2606 OID 16661)
+-- Name: DanhMucSite_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "DanhMucSite"
+    ADD CONSTRAINT "DanhMucSite_pkey" PRIMARY KEY ("IDDanhMucSite");
+
+
+--
+-- TOC entry 2035 (class 2606 OID 16565)
+-- Name: TinTuc_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "TinTuc"
+    ADD CONSTRAINT "TinTuc_pkey" PRIMARY KEY ("IDTinTuc");
+
+
+--
+-- TOC entry 2039 (class 2606 OID 16529)
+-- Name: User_DanhMucSite_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "User_DanhMucSite"
+    ADD CONSTRAINT "User_DanhMucSite_pkey" PRIMARY KEY ("IDUser", "IDDanhMucSite");
+
+
+--
+-- TOC entry 2037 (class 2606 OID 16531)
+-- Name: User_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "User"
+    ADD CONSTRAINT "User_pkey" PRIMARY KEY ("IDUser");
+
+
+--
+-- TOC entry 2041 (class 2606 OID 16533)
+-- Name: danhmuc_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY danhmuc
+    ADD CONSTRAINT danhmuc_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2043 (class 2606 OID 16535)
+-- Name: news_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY news
+    ADD CONSTRAINT news_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2047 (class 2620 OID 16585)
+-- Name: new_tieude; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER new_tieude BEFORE INSERT ON "TinTuc" FOR EACH ROW EXECUTE PROCEDURE check_tintuc_tieude();
+
+
+--
+-- TOC entry 2046 (class 2606 OID 16546)
+-- Name: User_DanhMucSite_IDUser_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "User_DanhMucSite"
+    ADD CONSTRAINT "User_DanhMucSite_IDUser_fkey" FOREIGN KEY ("IDUser") REFERENCES "User"("IDUser") ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 2182 (class 0 OID 0)
+-- Dependencies: 7
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+-- Completed on 2016-12-09 18:55:41 ICT
+
+--
+-- PostgreSQL database dump complete
+--
+
