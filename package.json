@@ -41,7 +41,7 @@
     "debug": "^2.3.3",
     "json2csv": "^3.7.2",
     "mkdirp": "^0.5.1",
-    "momentjs": "^2.0.0",
+    "moment": "^2.0.0",
     "paralleljs": "^0.2.1",
     "pg": "^6.1.0",
     "request": "^2.79.0",
