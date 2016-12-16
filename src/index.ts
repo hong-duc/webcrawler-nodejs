@@ -50,7 +50,8 @@ let crawLingHtml = (html, danhMucCon: IDanhMucSite): Promise<any> => {
             let imageUrl = $(element).find(danhMucCon.TempateCrawlImage).attr('src').trim();
             let ngayDangTin = $(element).find(danhMucCon.TemplateCrawlNgayDang).text().trim();
             // download hình ảnh
-            let rpImage = download(imageUrl, danhMucCon.DuongDan);
+            // let rpImage = download(imageUrl, danhMucCon.DuongDan);
+            let rpImage = Promise.resolve(imageUrl);
             // download ngày đăng tin
             let rpDate: Promise<string>;
 
@@ -109,7 +110,7 @@ let crawLingHtml = (html, danhMucCon: IDanhMucSite): Promise<any> => {
         .catch(error => {
             // console.error('Error: ', error)
             // return Promise.reject(error);
-            logger.error(`khi chuan bi luu csdl: ${error.message}; stack-trace: ${error.stack}`)
+            logger.error(`khi chuan bi luu csdl: ${error.message}; stack-trace: ${JSON.stringify(JSON.parse(error.stack))}`)
         })
 }
 
@@ -133,7 +134,7 @@ let startRequest = () => {
             }
             request(dm.DuongDan, (error, response, html) => {
                 if (error) {
-                    logger.error('khi dang request: ' + error.message)
+                    logger.error(`khi dang request: ${error.message}; stack-trace: error.stack`)
                     return;
                 }
 
