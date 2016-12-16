@@ -74,7 +74,7 @@ OFFSET ${offset};
 
 let persistDataBase = (): Promise<QueryResult> => {
     let queryText = `
-        COPY "TinTuc" ("IDDanhMucSite","TieuDe","MoTa","ThoiGianDangTin","URLNews","URLImage")
+        COPY "TinTuc" ("IDDanhMucSite","TieuDe","MoTa","ThoiGianDangTin","URLNews","URLThumbImage")
         FROM '${path.join(__dirname, "..", "..", "..", "tmp.csv")}'
         WITH (FORMAT 'csv', NULL "''")
     `
