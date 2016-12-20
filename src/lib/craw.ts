@@ -127,7 +127,7 @@ export let crawNoiDung = (link: string, templateCrawNoiDung): Promise<string> =>
  */
 export let removeClass = (html: string) => {
     let classregex = /class[ \t]*=[ \t]*"[^"]+"/g;
-    return html.replace(classregex,'class=""');
+    return html.replace(classregex,'');
 }
 
 

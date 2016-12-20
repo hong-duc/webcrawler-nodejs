@@ -18,7 +18,7 @@ export class CrawlTest {
     @Timeout(99999)
     public testCrawNoiDung() {
         let searchString = '<table class="tplCaption" cellspacing="0" cellpadding="3" border="0" align="center">';
-        let noclass = '<table class="" cellspacing="0" cellpadding="3" border="0" align="center">'
+        let noclass = `<table  cellspacing="0" cellpadding="3" border="0" align="center">`
         return new Promise((res, rej) => {
             crawNoiDung(this.linkTest, 'div#left_calculator > div.fck_detail.width_common.block_ads_connect')
                 .then(result => {

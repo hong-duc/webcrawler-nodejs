@@ -1,5 +1,5 @@
 import { TestSet, TestRunner } from 'alsatian';
-import { TapBark } from 'tap-bark';
+import * as tapSpec from 'tap-spec';
 
 const testSet = TestSet.create();
 
@@ -8,7 +8,7 @@ testSet.addTestsFromFiles("dist/test/crawl-test/*.spec.js");
 const testRunner = new TestRunner();
 
 testRunner.outputStream
-    .pipe(TapBark.create().getPipeable())
+    .pipe(tapSpec())
     .pipe(process.stdout)
 
 testRunner.run(testSet)
