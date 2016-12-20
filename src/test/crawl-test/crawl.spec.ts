@@ -1,5 +1,5 @@
 import { Expect, AsyncTest, Setup, Timeout } from 'alsatian';
-import { crawNoiDung, removeClass } from '../../lib/craw';
+import { crawNoiDung, removeClass,removeId } from '../../lib/craw';
 import * as fs from 'fs';
 import * as diff from 'diff';
 
@@ -30,6 +30,8 @@ export class CrawlTest {
                     Expect(result.indexOf(searchString)).not.toEqual(-1);
                     let htmlNoCLass = removeClass(result);
                     Expect(htmlNoCLass.indexOf(noclass)).not.toEqual(-1);
+                    let htmlNoId = removeId(htmlNoCLass);
+                    Expect(htmlNoId.indexOf(noclass)).not.toEqual(-1);
                     res();
                 })
                 .catch(error => rej(error));

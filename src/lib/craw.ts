@@ -126,8 +126,16 @@ export let crawNoiDung = (link: string, templateCrawNoiDung): Promise<string> =>
  * xóa hết class ra khỏi html
  */
 export let removeClass = (html: string) => {
-    let classregex = /class[ \t]*=[ \t]*"[^"]+"/g;
-    return html.replace(classregex,'');
+    let classRegex = /class[ \t]*=([ \t]*"[^"]+"|[ \t]*"")/g;
+    return html.replace(classRegex,'');
+}
+
+/**
+ * xóa hết ID ra khỏi html
+ */
+export let removeId = (html: string) => {
+    let idRegex = /id[ \t]*=([ \t]*"[^"]+"|[ \t]*"")/g;
+    return html.replace(idRegex,'');
 }
 
 
