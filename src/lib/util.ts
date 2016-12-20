@@ -26,6 +26,7 @@ interface ITinTuc {
     ThoiGianDangTin: string;
     URLNews: string;
     URLImage: string;
+    NoiDung: string;
 }
 
 /**
@@ -126,7 +127,7 @@ let download = (uri: string, linkUrl: string): Promise<string> => {
  * 
  * @desc tạo tintuc object
  */
-let taoTinTuc = (IDDanhMucSite: number, title: string, mota: string, newsUrl: string, imageUrl: string, ngayDangTin: string): ITinTuc => {
+let taoTinTuc = (IDDanhMucSite: number, title: string, mota: string, newsUrl: string, imageUrl: string, ngayDangTin: string,noiDung: string): ITinTuc => {
     let tintuc: ITinTuc = {
         IDDanhMucSite: IDDanhMucSite,
         TieuDe: title,
@@ -134,6 +135,7 @@ let taoTinTuc = (IDDanhMucSite: number, title: string, mota: string, newsUrl: st
         ThoiGianDangTin: ngayDangTin,
         URLNews: newsUrl,
         URLImage: imageUrl,
+        NoiDung: noiDung
     }
 
     return tintuc;

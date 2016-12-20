@@ -27,6 +27,10 @@ let soLuongDanhMuc = (): Promise<QueryResult> => {
     return Promise.resolve(pool.query(queryText));
 }
 
+/**
+ * @desc gọi xuống csdl và lấy danh sách các danh mục
+ * @return danh sách các danh mục con trong Promise
+ */
 let layLinkDanhMucCon = (): Promise<QueryResult> => {
     return soLuongDanhMuc().then(result => {
         let rowCount = result.rows[0].approximate_row_count;
@@ -34,7 +38,7 @@ let layLinkDanhMucCon = (): Promise<QueryResult> => {
             offset = 0;
         }
     }).then(() => {
-        return layLinkDanhMucSite();
+        return layLinkDanhMucSite(limit,offset);
     })
 }
 
@@ -42,7 +46,7 @@ let layLinkDanhMucCon = (): Promise<QueryResult> => {
  * @desc gọi xuống csdl và lấy danh sách các danh mục
  * @return danh sách các danh mục con trong Promise
  */
-let layLinkDanhMucSite = (): Promise<QueryResult> => {
+let layLinkDanhMucSite = (limitParam: number, offsetParam: number): Promise<QueryResult> => {
     // console.log('offset ' + offset)
     appDebug('offset ' + offset)
 
@@ -50,7 +54,8 @@ let layLinkDanhMucSite = (): Promise<QueryResult> => {
 SELECT 
   dmb."DuongDan", 
   dmb."SoLuongTinDuyetTim" as soluong, 
-  dmb."IDDanhMucSite", 
+  dmb."IDDanhMucSite",
+  dmb."TempateCrawlNoiDung",
   dmb."TempateCrawlTieuDe", 
   dmb."TempateCrawlMoTa",  
   dmb."TempateCrawlImage", 
@@ -60,8 +65,8 @@ SELECT
   dmb."ParentID"
 FROM 
   public."DanhMucSite" as dmb
-LIMIT ${limit}
-OFFSET ${offset};
+LIMIT ${limitParam}
+OFFSET ${offsetParam};
 `;
 
 
@@ -72,9 +77,13 @@ OFFSET ${offset};
     });
 }
 
+/**
+ * @desc
+ * lưu vào csdl sử dụng copy từ file csv vào
+ */
 let persistDataBase = (): Promise<QueryResult> => {
     let queryText = `
-        COPY "TinTuc" ("IDDanhMucSite","TieuDe","MoTa","ThoiGianDangTin","URLNews","URLThumbImage")
+        COPY "TinTuc" ("IDDanhMucSite","TieuDe","MoTa","ThoiGianDangTin","URLNews","URLThumbImage","NoiDung")
         FROM '${path.join(__dirname, "..", "..", "..", "tmp.csv")}'
         WITH (FORMAT 'csv', NULL "''")
     `
@@ -85,4 +94,4 @@ let persistDataBase = (): Promise<QueryResult> => {
 }
 
 
-export { pool, layLinkDanhMucCon, persistDataBase, soLuongDanhMuc };
+export { pool, layLinkDanhMucCon, persistDataBase, soLuongDanhMuc , layLinkDanhMucSite};

@@ -3,7 +3,7 @@ import { TapBark } from 'tap-bark';
 
 const testSet = TestSet.create();
 
-testSet.addTestsFromFiles("dist/test/database.spec.js");
+testSet.addTestsFromFiles("dist/test/crawl-test/*.spec.js");
 
 const testRunner = new TestRunner();
 
